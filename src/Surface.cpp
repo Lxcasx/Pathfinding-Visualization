@@ -8,7 +8,7 @@
 #include <cmath>
 #include <chrono>
 
-Surface::Surface(const GameDataRef &data) : _data(data), _bfs(grid), _drawer(data, grid) {
+Surface::Surface(const GameDataRef &data) : _data(data), _bfs(grid) {
 }
 
 void Surface::prepare() {
@@ -24,6 +24,9 @@ void Surface::prepare() {
 
         grid->push_back(row);
     }
+
+    level.resize(width * height);
+    map.load("resources/res/images/tileset.png", sf::Vector2u(20, 20), grid, width, height);
 }
 
 void Surface::init(int width, int height, float size) {
@@ -33,7 +36,6 @@ void Surface::init(int width, int height, float size) {
     this->cols = std::round(height / size);
     this->size = size;
 
-    _drawer.setSize(rows, cols, size);
     this->prepare();
 }
 
@@ -43,22 +45,24 @@ void Surface::setPosition(float x, float y) {
 void Surface::draw(float dt) {
     auto start = std::chrono::high_resolution_clock::now();
 
-    _drawer.draw(dt);
+    _data->window.draw(map);
 
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    PLOGV << "Time taken by function: " << duration.count() << " microseconds";
-}
-
-void Surface::update(float dt) {
     if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && !_bfs.finished) {
         _bfs.nextStep();
     }
 
-    if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && this->_bfs.finished) {
+    /*if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && this->_bfs.finished) {
         std::vector<Cell> path = this->_bfs.constructPath();
-        return;
-    }
+    }*/
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
+    PLOGV << "Time taken by function: " << duration.count() << " microseconds";
+}
+
+void Surface::update(float dt) {
+
 }
 
 void Surface::setWall(sf::Vector2i pos) {
@@ -133,7 +137,7 @@ void Surface::correctWall(Cell start, Cell end) {
 
 void Surface::handleInput() {
     // draw wall
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
         this->setWall(sf::Mouse::getPosition(this->_data->window));
     } else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
         this->setStart(sf::Mouse::getPosition(this->_data->window));
@@ -147,11 +151,12 @@ void Surface::handleInput() {
 }
 
 void Surface::clear() {
-    // this->grid.clear();
+    this->grid->clear();
     this->prepare();
     this->_bfs.clear();
     this->startPos = Cell{-1, -1};
     this->endPos = Cell{-1, -1};
+    map.update(grid);
 }
 
 void Surface::setStart(sf::Vector2i pos) {
@@ -172,7 +177,7 @@ void Surface::setStart(Cell cell) {
 
     // delete old start position
     if (startPos != Cell{-1, -1}) {
-        setCellField(cell, CellState::EMPTY);
+        setCellField(startPos, CellState::EMPTY);
     }
 
     startPos = cell;
@@ -199,7 +204,7 @@ void Surface::setEnd(Cell cell) {
 
     // delete old start position
     if (endPos != Cell{-1, -1}) {
-        setCellField(cell, CellState::EMPTY);
+        setCellField(endPos, CellState::EMPTY);
     }
 
     endPos = cell;
@@ -213,6 +218,7 @@ void Surface::save() {
 
 void Surface::setCellField(Cell cell, CellState state) {
     (*grid)[cell.row][cell.col].state = state;
-    CellField field = (*grid)[cell.row][cell.col];
-    _drawer.change(cell, field);
+    (*grid)[cell.row][cell.col].visited = false;
+
+    map.update(grid);
 }

@@ -9,7 +9,7 @@
 #include "Game.h"
 #include "Grid.h"
 #include "pathfinding/BFSFinding.h"
-#include "SurfaceDrawer.h"
+#include "GridMap.h"
 
 class Surface {
 public:
@@ -33,7 +33,6 @@ private:
     GameDataRef _data;
     GridRef grid = new Grid();
     path::BFSFinding _bfs;
-    SurfaceDrawer _drawer;
 
     int rows{};
     int cols{};
@@ -43,6 +42,9 @@ private:
     Cell lastPos = {-1, -1};
     Cell startPos = {-1, -1};
     Cell endPos = {-1, -1};
+    std::vector<int> level;
+
+    GridMap map;
 
     void prepare();
 
