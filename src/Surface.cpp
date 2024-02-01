@@ -5,6 +5,7 @@
 #include "Surface.h"
 #include "pathfinding/BFSFinding.h"
 #include "plog/Log.h"
+#include "DEFINITIONS.h"
 #include <cmath>
 #include <chrono>
 
@@ -26,7 +27,7 @@ void Surface::prepare() {
     }
 
     level.resize(width * height);
-    map.load("resources/res/images/tileset.png", sf::Vector2u(20, 20), grid, width, height);
+    map.load("resources/res/images/tileset.png", sf::Vector2u(GRID_SIZE, GRID_SIZE), grid, width, height);
 }
 
 void Surface::init(int width, int height, float size) {
@@ -43,8 +44,6 @@ void Surface::setPosition(float x, float y) {
 }
 
 void Surface::draw(float dt) {
-    auto start = std::chrono::high_resolution_clock::now();
-
     _data->window.draw(map);
 
     if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && !_bfs.finished) {
@@ -54,11 +53,6 @@ void Surface::draw(float dt) {
     /*if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && this->_bfs.finished) {
         std::vector<Cell> path = this->_bfs.constructPath();
     }*/
-
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-
-    PLOGV << "Time taken by function: " << duration.count() << " microseconds";
 }
 
 void Surface::update(float dt) {

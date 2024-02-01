@@ -5,9 +5,9 @@
 #ifndef PATHFINDING_DEFINITIONS_H
 #define PATHFINDING_DEFINITIONS_H
 
-constexpr unsigned int WINDOW_WIDTH = 1500;
+constexpr unsigned int WINDOW_WIDTH = 1280;
 constexpr unsigned int WINDOW_HEIGHT = 800;
-constexpr float GRID_SIZE = 20.f;
+constexpr float GRID_SIZE = 16.f;
 
 #define WINDOW_TITLE "Pathfinding Visualization"
 
