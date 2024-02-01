@@ -6,12 +6,12 @@
 #include "pathfinding/BFSFinding.h"
 #include "plog/Log.h"
 #include <cmath>
+#include <chrono>
 
 Surface::Surface(const GameDataRef &data) : _data(data), _bfs(grid), _drawer(data, grid) {
 }
 
 void Surface::prepare() {
-
     for (int i = 0; i < this->rows; i++) {
         std::vector<CellField> row;
 
@@ -41,7 +41,13 @@ void Surface::setPosition(float x, float y) {
 }
 
 void Surface::draw(float dt) {
+    auto start = std::chrono::high_resolution_clock::now();
+
     _drawer.draw(dt);
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    PLOGV << "Time taken by function: " << duration.count() << " microseconds";
 }
 
 void Surface::update(float dt) {
@@ -71,7 +77,7 @@ void Surface::setWall(Cell pos) {
     }
 
     lastPos = pos;
-    grid->at(pos.row).at(pos.col).state = CellState::WALL;
+    setCellField(pos, CellState::WALL);
 }
 
 bool Surface::isPositionInGrid(sf::Vector2i pos, Cell *cell) const {
@@ -105,7 +111,7 @@ void Surface::correctWall(Cell start, Cell end) {
     int err = dx - dy;
 
     while (true) {
-        grid->at(x1).at(y1).state = CellState::WALL;
+        setCellField(Cell{x1, y1}, CellState::WALL);
 
         if (x1 == x2 && y1 == y2) {
             break;
@@ -166,12 +172,13 @@ void Surface::setStart(Cell cell) {
 
     // delete old start position
     if (startPos != Cell{-1, -1}) {
-        this->grid->at(startPos.row).at(startPos.col).state = CellState::EMPTY;
+        setCellField(cell, CellState::EMPTY);
     }
 
     startPos = cell;
     _bfs.setStart(startPos);
-    this->grid->at(cell.row).at(cell.col).state = CellState::START;
+
+    setCellField(cell, CellState::START);
 }
 
 void Surface::setEnd(sf::Vector2i pos) {
@@ -192,13 +199,20 @@ void Surface::setEnd(Cell cell) {
 
     // delete old start position
     if (endPos != Cell{-1, -1}) {
-        this->grid->at(endPos.row).at(endPos.col).state = CellState::EMPTY;
+        setCellField(cell, CellState::EMPTY);
     }
 
     endPos = cell;
     _bfs.setEnd(endPos);
-    this->grid->at(cell.row).at(cell.col).state = CellState::END;
+
+    setCellField(cell, CellState::END);
 }
 
 void Surface::save() {
+}
+
+void Surface::setCellField(Cell cell, CellState state) {
+    (*grid)[cell.row][cell.col].state = state;
+    CellField field = (*grid)[cell.row][cell.col];
+    _drawer.change(cell, field);
 }

@@ -7,7 +7,7 @@
 
 constexpr unsigned int WINDOW_WIDTH = 1500;
 constexpr unsigned int WINDOW_HEIGHT = 800;
-constexpr float GRID_SIZE = 5.f;
+constexpr float GRID_SIZE = 20.f;
 
 #define WINDOW_TITLE "Pathfinding Visualization"
 

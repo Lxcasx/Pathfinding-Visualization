@@ -16,6 +16,8 @@ public:
 
     void setSize(int rows, int cols, int size);
 
+    void change(Cell cell, CellField field);
+
     void draw(float dt);
 
 private:
@@ -24,7 +26,11 @@ private:
     int _rows{};
     int _cols{};
     int _size{};
-    sf::RectangleShape cellShape;
+
+    sf::RenderTexture texture;
+
+    sf::VertexArray getRect(int row, int col, sf::Color color) const;
 };
 
 #endif //PATHFINDING_SURFACEDRAWER_H
+

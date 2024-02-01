@@ -13,7 +13,7 @@
 
 class Surface {
 public:
-    Surface(const GameDataRef& data);
+    Surface(const GameDataRef &data);
 
     void init(int width, int height, float size);
 
@@ -22,6 +22,7 @@ public:
     void handleInput();
 
     void update(float dt);
+
     void draw(float dt);
 
     void clear();
@@ -30,7 +31,7 @@ public:
 
 private:
     GameDataRef _data;
-    GridRef grid = std::make_shared<Grid>();
+    GridRef grid = new Grid();
     path::BFSFinding _bfs;
     SurfaceDrawer _drawer;
 
@@ -39,23 +40,29 @@ private:
     int width{};
     int height{};
     float size{};
-    Cell lastPos = {-1,-1};
-    Cell startPos = {-1,-1};
-    Cell endPos  = {-1,-1};
+    Cell lastPos = {-1, -1};
+    Cell startPos = {-1, -1};
+    Cell endPos = {-1, -1};
 
     void prepare();
+
     void correctWall(Cell start, Cell end);
 
     void setWall(sf::Vector2i pos);
+
     void setWall(Cell cell);
 
     void setStart(sf::Vector2i pos);
+
     void setStart(Cell cell);
 
     void setEnd(sf::Vector2i pos);
+
     void setEnd(Cell cell);
 
-    bool isPositionInGrid(sf::Vector2i pos, Cell* cell) const;
+    void setCellField(Cell cell, CellState state);
+
+    bool isPositionInGrid(sf::Vector2i pos, Cell *cell) const;
 };
 
 

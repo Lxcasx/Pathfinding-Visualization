@@ -19,30 +19,26 @@ enum CellState {
 };
 
 
-class Cell{
+class Cell {
 public:
     int row;
     int col;
 
-    bool operator==(const Cell& lhs) const
-    {
+    bool operator==(const Cell &lhs) const {
         return lhs.row == row && lhs.col == col;
     }
 
-    bool operator!=(const Cell& lhs) const
-    {
+    bool operator!=(const Cell &lhs) const {
         return lhs.row != row && lhs.col != col;
     }
 
-    Cell operator+(const Cell& lhs) const
-    {
+    Cell operator+(const Cell &lhs) const {
         return Cell{
                 row + lhs.row,
                 col + lhs.col
         };
     }
 };
-
 
 
 struct CellField {
@@ -52,6 +48,6 @@ struct CellField {
 };
 
 typedef std::vector<std::vector<CellField>> Grid;
-typedef std::shared_ptr<Grid> GridRef;
+typedef Grid *GridRef;
 
 #endif //PATHFINDING_GRID_H
