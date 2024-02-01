@@ -11,7 +11,7 @@
 GameState::GameState(GameDataRef data) : _data(std::move(data)) {
     PLOGI << "Initializing game state";
 
-    _surface.init(WINDOW_WIDTH, WINDOW_HEIGHT, 20.f);
+    _surface.init(WINDOW_WIDTH, WINDOW_HEIGHT, GRID_SIZE);
 }
 
 void GameState::init() {
@@ -19,7 +19,7 @@ void GameState::init() {
 
 void GameState::handleInput() {
     sf::Event event{};
-
+    
     while (this->_data->window.pollEvent(event)) {
         if (sf::Event::Closed == event.type) {
             this->_data->window.close();
@@ -29,11 +29,12 @@ void GameState::handleInput() {
     }
 }
 
-void GameState::update(float _) {
+void GameState::update(float dt) {
+    this->_surface.update(dt);
 }
 
 void GameState::draw(float dt) {
-    this->_data->window.clear(sf::Color(28, 28, 28, 255));
+    this->_data->window.clear(sf::Color::Red);
 
     this->_surface.draw(dt);
 

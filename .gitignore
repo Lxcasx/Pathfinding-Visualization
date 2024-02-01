@@ -41,3 +41,9 @@
 **/*.cbp
 **/CMakeScripts
 **/compile_commands.json
+**/bin
+**/_deps
+CPackConfig.cmake
+CPackSourceConfig.cmake
+.cmake
+.idea

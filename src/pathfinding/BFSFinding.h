@@ -12,27 +12,27 @@
 namespace path {
     class BFSFinding {
     public:
-        BFSFinding(Grid *grid);
+        BFSFinding(GridRef grid);
 
-        void setStart(sf::Vector2i start);
+        void setStart(Cell start);
 
-        void setEnd(sf::Vector2i end);
+        void setEnd(Cell end);
 
         void nextStep();
 
-        std::vector<sf::Vector2i> constructPath();
+        std::vector<Cell> constructPath();
 
         void clear();
 
         bool finished = false;
 
     private:
-        Grid *_grid;
-        sf::Vector2i start;
-        sf::Vector2i end;
-        std::queue<sf::Vector2i> queue;
+        GridRef _grid;
+        Cell start;
+        Cell end;
+        std::queue<Cell> queue;
 
-        void markVisited(sf::Vector2i cell);
+        void markVisited(Cell cell);
     };
 }
 #endif //PATHFINDING_BFSFINDING_H

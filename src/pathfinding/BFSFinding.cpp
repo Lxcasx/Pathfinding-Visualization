@@ -4,19 +4,20 @@
 
 #include <list>
 #include <queue>
+#include <utility>
 #include "BFSFinding.h"
 #include "plog/Log.h"
 
 namespace path {
-    BFSFinding::BFSFinding(Grid *grid) : _grid(grid) {}
+    BFSFinding::BFSFinding(GridRef grid) : _grid(std::move(grid)) {}
 
-    void BFSFinding::setStart(sf::Vector2i start) {
+    void BFSFinding::setStart(Cell start) {
         this->start = start;
         queue.push(start);
         this->markVisited(start);
     }
 
-    void BFSFinding::setEnd(sf::Vector2i end) {
+    void BFSFinding::setEnd(Cell end) {
         this->end = end;
     }
 
@@ -26,11 +27,11 @@ namespace path {
     }
 
     void BFSFinding::nextStep() {
-        std::vector<sf::Vector2i> directions = {{-1, 0},
-                                                {1,  0},
-                                                {0,  -1},
-                                                {0,  1}}; // 4 mögliche Richtungen
-        sf::Vector2i current = queue.front();
+        std::vector<Cell> directions = {{-1, 0},
+                                        {1,  0},
+                                        {0,  -1},
+                                        {0,  1}}; // 4 mögliche Richtungen
+        Cell current = queue.front();
         queue.pop();
 
         // Überprüfen, ob der Endpunkt erreicht wurde
@@ -41,38 +42,38 @@ namespace path {
         }
 
         // Durchlaufe alle Nachbarn
-        for (const sf::Vector2i &direction: directions) {
-            sf::Vector2i neighbor = current + direction;
+        for (const Cell &direction: directions) {
+            Cell neighbor = current + direction;
 
             // Überprüfen, ob der Nachbar innerhalb der Gittergrenzen liegt und nicht besucht wurde
-            if (_grid->at(neighbor.x).at(neighbor.y).state != WALL &&
-                !_grid->at(neighbor.x).at(neighbor.y).visited) {
+            if (_grid->at(neighbor.row).at(neighbor.col).state != WALL &&
+                !_grid->at(neighbor.row).at(neighbor.col).visited) {
 
                 queue.push(neighbor);
                 markVisited(neighbor);
 
-                _grid->at(neighbor.x).at(neighbor.y).parent = current;
+                _grid->at(neighbor.row).at(neighbor.col).parent = current;
             }
         }
     }
 
-    void BFSFinding::markVisited(sf::Vector2i cell) {
-        this->_grid->at(cell.x).at(cell.y).visited = true;
+    void BFSFinding::markVisited(Cell cell) {
+        this->_grid->at(cell.row).at(cell.col).visited = true;
     }
 
-    std::vector<sf::Vector2i> BFSFinding::constructPath() {
+    std::vector<Cell> BFSFinding::constructPath() {
         // Pfad extrahieren, indem der Elternzeiger zurückverfolgt wird
-        std::vector<sf::Vector2i> path;
-        sf::Vector2i current = end;
+        std::vector<Cell> path;
+        Cell current = end;
 
         while (current != start) {
             path.push_back(current);
 
-            if (_grid->at(current.x).at(current.y).state == CellState::EMPTY) {
-                _grid->at(current.x).at(current.y).state = CellState::PATH;
-            }
+            //if (_grid->at(current.row).at(current.col).state == CellState::EMPTY) {
+            _grid->at(current.row).at(current.col).state = CellState::PATH;
+            //}
 
-            current = _grid->at(current.x).at(current.y).parent;
+            current = _grid->at(current.row).at(current.col).parent;
         }
 
         // Startpunkt hinzufügen

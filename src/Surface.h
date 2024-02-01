@@ -9,10 +9,11 @@
 #include "Game.h"
 #include "Grid.h"
 #include "pathfinding/BFSFinding.h"
+#include "GridMap.h"
 
 class Surface {
 public:
-    Surface(GameDataRef data);
+    Surface(const GameDataRef &data);
 
     void init(int width, int height, float size);
 
@@ -20,13 +21,9 @@ public:
 
     void handleInput();
 
+    void update(float dt);
+
     void draw(float dt);
-
-    void setWall(sf::Vector2i pos);
-
-    void setStart(sf::Vector2i pos);
-
-    void setEnd(sf::Vector2i pos);
 
     void clear();
 
@@ -34,18 +31,40 @@ public:
 
 private:
     GameDataRef _data;
-    Grid grid;
-    int rows;
-    int cols;
-    int width;
-    int height;
-    float size;
-    sf::Vector2i *lastPos = nullptr;
-    sf::Vector2i *startPos = nullptr;
-    sf::Vector2i *endPos = nullptr;
+    GridRef grid = new Grid();
     path::BFSFinding _bfs;
 
+    int rows{};
+    int cols{};
+    int width{};
+    int height{};
+    float size{};
+    Cell lastPos = {-1, -1};
+    Cell startPos = {-1, -1};
+    Cell endPos = {-1, -1};
+    std::vector<int> level;
+
+    GridMap map;
+
     void prepare();
+
+    void correctWall(Cell start, Cell end);
+
+    void setWall(sf::Vector2i pos);
+
+    void setWall(Cell cell);
+
+    void setStart(sf::Vector2i pos);
+
+    void setStart(Cell cell);
+
+    void setEnd(sf::Vector2i pos);
+
+    void setEnd(Cell cell);
+
+    void setCellField(Cell cell, CellState state);
+
+    bool isPositionInGrid(sf::Vector2i pos, Cell *cell) const;
 };
 
 
