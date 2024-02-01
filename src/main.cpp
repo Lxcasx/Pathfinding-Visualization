@@ -9,7 +9,7 @@ using namespace std;
 
 int main() {
     static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
-    plog::init(plog::debug, &consoleAppender);
+    plog::init(plog::verbose, &consoleAppender);
 
     Game(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
 

@@ -3,26 +3,26 @@
 //
 
 #include "Surface.h"
-#include "DEFINITIONS.h"
 #include "pathfinding/BFSFinding.h"
-#include <utility>
+#include "plog/Log.h"
 #include <cmath>
 
-Surface::Surface(GameDataRef data) : _data(std::move(data)), _bfs(&this->grid) {
+Surface::Surface(const GameDataRef &data) : _data(data), _bfs(grid), _drawer(data, grid) {
 }
 
 void Surface::prepare() {
+
     for (int i = 0; i < this->rows; i++) {
-        std::vector<Cell> row;
+        std::vector<CellField> row;
 
         for (int j = 0; j < this->cols; j++) {
             if (j == 0 || j == this->cols - 1 || i == 0 || i == this->rows - 1)
-                row.push_back(Cell{CellState::WALL});
+                row.push_back(CellField{CellState::WALL});
             else
-                row.push_back(Cell{CellState::EMPTY});
+                row.push_back(CellField{CellState::EMPTY});
         }
 
-        grid.push_back(row);
+        grid->push_back(row);
     }
 }
 
@@ -33,6 +33,7 @@ void Surface::init(int width, int height, float size) {
     this->cols = std::round(height / size);
     this->size = size;
 
+    _drawer.setSize(rows, cols, size);
     this->prepare();
 }
 
@@ -40,62 +41,88 @@ void Surface::setPosition(float x, float y) {
 }
 
 void Surface::draw(float dt) {
-    // draw border around grid
-    sf::RectangleShape border(sf::Vector2f(width, height));
-    border.setFillColor(sf::Color::Transparent);
-    border.setOutlineThickness(2);
-    border.setOutlineColor(sf::Color::Red);
-    this->_data->window.draw(border);
+    _drawer.draw(dt);
+}
 
-    sf::RectangleShape shape(sf::Vector2f(this->size, this->size));
-
-    for (int i = 0; i < this->rows; i++) {
-        for (int j = 0; j < this->cols; j++) {
-            Cell cell = this->grid[i][j];
-
-            if (cell.state == CellState::EMPTY) {
-                if (cell.visited) {
-                    shape.setFillColor(COLOR_VISITED);
-                } else {
-                    shape.setFillColor(COLOR_BG);
-                }
-            } else if (cell.state == CellState::WALL) {
-                shape.setFillColor(COLOR_WALL);
-            } else if (cell.state == CellState::START) {
-                shape.setFillColor(COLOR_START);
-            } else if (cell.state == CellState::END) {
-                shape.setFillColor(COLOR_END);
-            } else if (cell.state == CellState::PATH) {
-                shape.setFillColor(COLOR_PATH);
-            }
-
-            int x = i * size;
-            int y = j * size;
-
-            shape.setPosition(x, y);
-            this->_data->window.draw(shape);
-        }
-    }
-
-    if (this->startPos != nullptr && this->endPos != nullptr && !_bfs.finished) {
+void Surface::update(float dt) {
+    if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && !_bfs.finished) {
         _bfs.nextStep();
     }
 
-    if (this->startPos != nullptr && this->endPos != nullptr && this->_bfs.finished) {
-        std::vector<sf::Vector2i> path = this->_bfs.constructPath();
+    if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && this->_bfs.finished) {
+        std::vector<Cell> path = this->_bfs.constructPath();
+        return;
     }
 }
 
 void Surface::setWall(sf::Vector2i pos) {
+    Cell cell{};
+
+    if (!isPositionInGrid(pos, &cell)) {
+        return;
+    }
+
+    setWall(cell);
+}
+
+void Surface::setWall(Cell pos) {
+    if (lastPos != Cell{-1, -1}) {
+        this->correctWall(pos, lastPos);
+    }
+
+    lastPos = pos;
+    grid->at(pos.row).at(pos.col).state = CellState::WALL;
+}
+
+bool Surface::isPositionInGrid(sf::Vector2i pos, Cell *cell) const {
     int row = pos.x / this->size;
     int col = pos.y / this->size;
 
     if (row < 0 || col < 0)
-        return;
-    if (row >= this->rows || col >= this->cols)
-        return;
+        return false;
+    if (row >= rows || col >= cols)
+        return false;
 
-    this->grid[row][col].state = CellState::WALL;
+    cell->row = row;
+    cell->col = col;
+
+    return true;
+}
+
+// Correct the placement of walls that were not captured by the loop using the bresenham line algorithm.
+void Surface::correctWall(Cell start, Cell end) {
+    int x1 = start.row;
+    int y1 = start.col;
+    int x2 = end.row;
+    int y2 = end.col;
+
+    int dx = std::abs(x2 - x1);
+    int dy = std::abs(y2 - y1);
+
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+
+    int err = dx - dy;
+
+    while (true) {
+        grid->at(x1).at(y1).state = CellState::WALL;
+
+        if (x1 == x2 && y1 == y2) {
+            break;
+        }
+
+        int e2 = 2 * err;
+
+        if (e2 > -dy) {
+            err -= dy;
+            x1 += sx;
+        }
+
+        if (e2 < dx) {
+            err += dx;
+            y1 += sy;
+        }
+    }
 }
 
 void Surface::handleInput() {
@@ -108,55 +135,69 @@ void Surface::handleInput() {
         this->setEnd(sf::Mouse::getPosition(this->_data->window));
     } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
         this->clear();
+    } else {
+        lastPos = Cell{-1, -1};
     }
 }
 
 void Surface::clear() {
-    this->grid.clear();
+    // this->grid.clear();
     this->prepare();
     this->_bfs.clear();
-    this->startPos = nullptr;
-    this->endPos = nullptr;
+    this->startPos = Cell{-1, -1};
+    this->endPos = Cell{-1, -1};
 }
 
 void Surface::setStart(sf::Vector2i pos) {
-    int row = pos.x / this->size;
-    int col = pos.y / this->size;
+    Cell cell{};
 
-    if (row < 0 || col < 0)
+    if (!isPositionInGrid(pos, &cell)) {
         return;
-    if (row >= this->rows || col >= this->cols)
+    }
+
+    setStart(cell);
+}
+
+void Surface::setStart(Cell cell) {
+    CellField field = this->grid->at(cell.row).at(cell.col);
+
+    if (field.state == CellState::WALL || field.state == CellState::END)
         return;
 
-    if (this->grid[row][col].state == CellState::WALL || this->grid[row][col].state == CellState::END)
-        return;
+    // delete old start position
+    if (startPos != Cell{-1, -1}) {
+        this->grid->at(startPos.row).at(startPos.col).state = CellState::EMPTY;
+    }
 
-    if (this->startPos != nullptr)
-        this->grid[this->startPos->x][this->startPos->y].state = CellState::EMPTY;
-
-    startPos = new sf::Vector2i(row, col);
-    _bfs.setStart(*startPos);
-    this->grid[row][col].state = CellState::START;
+    startPos = cell;
+    _bfs.setStart(startPos);
+    this->grid->at(cell.row).at(cell.col).state = CellState::START;
 }
 
 void Surface::setEnd(sf::Vector2i pos) {
-    int row = pos.x / this->size;
-    int col = pos.y / this->size;
+    Cell cell{};
 
-    if (row < 0 || col < 0)
+    if (!isPositionInGrid(pos, &cell)) {
         return;
-    if (row >= this->rows || col >= this->cols)
+    }
+
+    setEnd(cell);
+}
+
+void Surface::setEnd(Cell cell) {
+    CellField field = this->grid->at(cell.row).at(cell.col);
+
+    if (field.state == CellState::WALL || field.state == CellState::START)
         return;
 
-    if (this->grid[row][col].state == CellState::WALL || this->grid[row][col].state == CellState::START)
-        return;
+    // delete old start position
+    if (endPos != Cell{-1, -1}) {
+        this->grid->at(endPos.row).at(endPos.col).state = CellState::EMPTY;
+    }
 
-    if (this->endPos != nullptr)
-        this->grid[this->endPos->x][this->endPos->y].state = CellState::EMPTY;
-
-    endPos = new sf::Vector2i(row, col);
-    _bfs.setEnd(*endPos);
-    this->grid[row][col].state = CellState::END;
+    endPos = cell;
+    _bfs.setEnd(endPos);
+    this->grid->at(cell.row).at(cell.col).state = CellState::END;
 }
 
 void Surface::save() {
