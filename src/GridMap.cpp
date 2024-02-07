@@ -41,13 +41,31 @@ void GridMap::update(GridRef grid) {
             // map index of 2 dimensional array to one dimensional
             unsigned int p = i * cols + j;
 
-            // create 4 vertecies per element
+            // create 4 vertices per element
             for (int k = 0; k < 4; ++k) {
                 unsigned int index = (p * 4) + k;
 
                 _vertices[index] = rect[k];
             }
         }
+    }
+}
+
+void GridMap::updateTile(GridRef grid, Cell cell) {
+    int cols = height / tileSize.x;
+
+    CellField field = (*grid)[cell.row][cell.col];
+    sf::Color color = getColor(field);
+    sf::VertexArray rect = getRect(cell.row, cell.col, color);
+
+    // map index of 2 dimensional array to one dimensional
+    unsigned int p = cell.row * cols + cell.col;
+
+    // create 4 vertices per element
+    for (int k = 0; k < 4; ++k) {
+        unsigned int index = (p * 4) + k;
+
+        _vertices[index] = rect[k];
     }
 }
 

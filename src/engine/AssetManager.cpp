@@ -1,5 +1,5 @@
 //
-// Created by lucas on 27.01.24.StateRef
+// Created by lucas on 27.01.24.
 //
 
 #include "AssetManager.h"

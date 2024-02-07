@@ -41,14 +41,14 @@ void MainState::handleInput() {
         }
 
         // hover effect for start button
-        if (this->_data->input.isSpriteHoverd(this->_startButton, this->_data->window)) {
+        if (_data->input.isSpriteFloating(this->_startButton, this->_data->window)) {
             this->_startButton.setColor(sf::Color(255, 255, 255, 150));
         } else {
             this->_startButton.setColor(sf::Color(255, 255, 255, 255));
         }
 
         // hover effect for info button
-        if (this->_data->input.isSpriteHoverd(this->_infoButton, this->_data->window)) {
+        if (_data->input.isSpriteFloating(this->_infoButton, this->_data->window)) {
             this->_infoButton.setColor(sf::Color(255, 255, 255, 150));
         } else {
             this->_infoButton.setColor(sf::Color(255, 255, 255, 255));

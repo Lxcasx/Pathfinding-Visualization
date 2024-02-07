@@ -10,6 +10,8 @@
 #include "vector"
 #include "SFML/Graphics.hpp"
 
+using namespace std;
+
 enum CellState {
     EMPTY,
     WALL,
@@ -17,7 +19,6 @@ enum CellState {
     END,
     PATH
 };
-
 
 class Cell {
 public:
@@ -40,14 +41,13 @@ public:
     }
 };
 
-
 struct CellField {
     CellState state = CellState::EMPTY;
     bool visited = false;
     Cell parent = {-1, -1};
 };
 
-typedef std::vector<std::vector<CellField>> Grid;
+typedef vector<vector<CellField>> Grid;
 typedef Grid *GridRef;
 
 #endif //PATHFINDING_GRID_H

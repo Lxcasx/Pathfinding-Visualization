@@ -9,7 +9,7 @@ constexpr unsigned int WINDOW_WIDTH = 1280;
 constexpr unsigned int WINDOW_HEIGHT = 800;
 constexpr float GRID_SIZE = 16.f;
 
-#define WINDOW_TITLE "Pathfinding Visualization"
+#define WINDOW_TITLE "Pathfinding Visualization - by Lucas Heinschke"
 
 #define SPLASH_STATE_SHOW_TIME 3.0
 #define SPLASH_STATE_BACKGROUND_FILEPATH "./resources/res/images/splash_state_background.png"

@@ -20,6 +20,8 @@ public:
 
     void update(GridRef grid);
 
+    void updateTile(GridRef grid, Cell cell);
+
 private:
     sf::VertexArray _vertices;
     sf::Texture _texture;

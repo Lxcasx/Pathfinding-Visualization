@@ -14,11 +14,11 @@ namespace engine {
 
         ~InputManager() = default;
 
-        bool isSpriteClicked(sf::Sprite object, sf::Mouse::Button button, sf::RenderWindow &window);
+        static bool isSpriteClicked(const sf::Sprite &object, sf::Mouse::Button button, sf::RenderWindow &window);
 
-        bool isSpriteHoverd(sf::Sprite object, sf::RenderWindow &window);
+        static bool isSpriteFloating(const sf::Sprite &object, sf::RenderWindow &window);
 
-        sf::Vector2i getMousePosition(sf::RenderWindow &window);
+        static sf::Vector2i getMousePosition(sf::RenderWindow &window);
     };
 }
 

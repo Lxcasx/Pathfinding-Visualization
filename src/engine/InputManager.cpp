@@ -5,15 +5,15 @@
 #include "InputManager.h"
 
 namespace engine {
-    bool InputManager::isSpriteClicked(sf::Sprite object, sf::Mouse::Button button, sf::RenderWindow &window) {
+    bool InputManager::isSpriteClicked(const sf::Sprite &object, sf::Mouse::Button button, sf::RenderWindow &window) {
         if (sf::Mouse::isButtonPressed(button)) {
-            return this->isSpriteHoverd(object, window);
+            return isSpriteFloating(object, window);
         }
 
         return false;
     }
 
-    bool InputManager::isSpriteHoverd(sf::Sprite object, sf::RenderWindow &window) {
+    bool InputManager::isSpriteFloating(const sf::Sprite &object, sf::RenderWindow &window) {
         sf::IntRect tempRect(object.getPosition().x, object.getPosition().y, object.getGlobalBounds().width,
                              object.getGlobalBounds().height);
 

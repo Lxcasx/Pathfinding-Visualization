@@ -48,11 +48,13 @@ void Surface::draw(float dt) {
 
     if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && !_bfs.finished) {
         _bfs.nextStep();
+        map.update(grid);
     }
 
-    /*if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && this->_bfs.finished) {
+    if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && this->_bfs.finished) {
         std::vector<Cell> path = this->_bfs.constructPath();
-    }*/
+        map.update(grid);
+    }
 }
 
 void Surface::update(float dt) {
@@ -214,5 +216,5 @@ void Surface::setCellField(Cell cell, CellState state) {
     (*grid)[cell.row][cell.col].state = state;
     (*grid)[cell.row][cell.col].visited = false;
 
-    map.update(grid);
+    map.updateTile(grid, cell);
 }
