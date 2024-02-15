@@ -42,7 +42,11 @@ add_executable(Pathfinding src/main.cpp
         src/pathfinding/BFSFinding.cpp
         src/pathfinding/BFSFinding.h
         src/GridMap.cpp
-        src/GridMap.h)
+        src/GridMap.h
+        src/pathfinding/Pathfinding.h
+        src/pathfinding/Pathfinding.cpp
+        src/pathfinding/DijkstraFinding.cpp
+        src/pathfinding/DijkstraFinding.h)
 
 
 target_link_libraries(Pathfinding PRIVATE sfml-graphics)

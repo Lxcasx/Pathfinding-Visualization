@@ -15,8 +15,7 @@
 class GridMap : public sf::Drawable, public sf::Transformable {
 public:
     bool
-    load(const std::string &tileset, sf::Vector2u tileSize, GridRef grid, unsigned int width,
-         unsigned int height);
+    load(sf::Vector2u tileSize, GridRef grid, unsigned int width, unsigned int height);
 
     void update(GridRef grid);
 
@@ -25,11 +24,11 @@ public:
 private:
     sf::VertexArray _vertices;
     sf::Texture _texture;
-    unsigned int width;
-    unsigned int height;
-    sf::Vector2u tileSize;
+    unsigned int _width;
+    unsigned int _height;
+    sf::Vector2u _tileSize;
 
-    virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
     sf::VertexArray getRect(int row, int col, sf::Color color) const;
 

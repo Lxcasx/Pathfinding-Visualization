@@ -8,8 +8,9 @@
 #include "DEFINITIONS.h"
 #include <cmath>
 #include <chrono>
+#include <utility>
 
-Surface::Surface(const GameDataRef &data) : _data(data), _bfs(grid) {
+Surface::Surface(GameDataRef data) : _data(std::move(data)), _path(grid) {
 }
 
 void Surface::prepare() {
@@ -27,7 +28,7 @@ void Surface::prepare() {
     }
 
     level.resize(width * height);
-    map.load("resources/res/images/tileset.png", sf::Vector2u(GRID_SIZE, GRID_SIZE), grid, width, height);
+    map.load(sf::Vector2u(GRID_SIZE, GRID_SIZE), grid, width, height);
 }
 
 void Surface::init(int width, int height, float size) {
@@ -46,13 +47,13 @@ void Surface::setPosition(float x, float y) {
 void Surface::draw(float dt) {
     _data->window.draw(map);
 
-    if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && !_bfs.finished) {
-        _bfs.nextStep();
+    if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && !_path.isFinished) {
+        _path.nextStep();
         map.update(grid);
     }
 
-    if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && this->_bfs.finished) {
-        std::vector<Cell> path = this->_bfs.constructPath();
+    if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && this->_path.isFinished) {
+        this->_path.constructPath();
         map.update(grid);
     }
 }
@@ -149,7 +150,7 @@ void Surface::handleInput() {
 void Surface::clear() {
     this->grid->clear();
     this->prepare();
-    this->_bfs.clear();
+    this->_path.clear();
     this->startPos = Cell{-1, -1};
     this->endPos = Cell{-1, -1};
     map.update(grid);
@@ -177,7 +178,7 @@ void Surface::setStart(Cell cell) {
     }
 
     startPos = cell;
-    _bfs.setStart(startPos);
+    _path.setStart(startPos);
 
     setCellField(cell, CellState::START);
 }
@@ -204,7 +205,7 @@ void Surface::setEnd(Cell cell) {
     }
 
     endPos = cell;
-    _bfs.setEnd(endPos);
+    _path.setEnd(endPos);
 
     setCellField(cell, CellState::END);
 }

@@ -8,12 +8,13 @@
 
 #include "Game.h"
 #include "Grid.h"
-#include "pathfinding/BFSFinding.h"
+#include "pathfinding/Pathfinding.h"
+#include "pathfinding/DijkstraFinding.h"
 #include "GridMap.h"
 
 class Surface {
 public:
-    Surface(const GameDataRef &data);
+    Surface(GameDataRef data);
 
     void init(int width, int height, float size);
 
@@ -32,7 +33,7 @@ public:
 private:
     GameDataRef _data;
     GridRef grid = new Grid();
-    path::BFSFinding _bfs;
+    path::DijkstraFinding _path;
 
     int rows{};
     int cols{};

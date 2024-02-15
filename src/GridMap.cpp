@@ -7,14 +7,10 @@
 #include "Grid.h"
 #include "DEFINITIONS.h"
 
-bool GridMap::load(const std::string &tileset, sf::Vector2u tileSize, GridRef grid, unsigned int width,
-                   unsigned int height) {
-    if (!_texture.loadFromFile(tileset))
-        return false;
-
-    this->tileSize = tileSize;
-    this->width = width;
-    this->height = height;
+bool GridMap::load(sf::Vector2u tileSize, GridRef grid, unsigned int width, unsigned int height) {
+    _tileSize = tileSize;
+    _width = width;
+    _height = height;
 
     int vertSize = width / tileSize.x * height / tileSize.x * 4;
 
@@ -29,8 +25,8 @@ bool GridMap::load(const std::string &tileset, sf::Vector2u tileSize, GridRef gr
 }
 
 void GridMap::update(GridRef grid) {
-    int rows = width / tileSize.x;
-    int cols = height / tileSize.x;
+    int rows = _width / _tileSize.x;
+    int cols = _height / _tileSize.x;
 
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
@@ -52,7 +48,7 @@ void GridMap::update(GridRef grid) {
 }
 
 void GridMap::updateTile(GridRef grid, Cell cell) {
-    int cols = height / tileSize.x;
+    int cols = _height / _tileSize.x;
 
     CellField field = (*grid)[cell.row][cell.col];
     sf::Color color = getColor(field);
@@ -72,16 +68,13 @@ void GridMap::updateTile(GridRef grid, Cell cell) {
 void GridMap::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     states.transform *= getTransform();
 
-    // apply the tileset texture
-    //states.texture = &_texture;
-
     // draw the vertex array
     target.draw(_vertices, states);
 }
 
 sf::VertexArray GridMap::getRect(int row, int col, sf::Color color) const {
     sf::VertexArray rect(sf::Quads, 4);
-    int size = tileSize.x;
+    int size = _tileSize.x;
 
     float x1 = row * size;
     float y1 = col * size;
@@ -113,22 +106,17 @@ sf::Color GridMap::getColor(CellField field) {
     switch (field.state) {
         case CellState::WALL:
             return COLOR_WALL;
-            break;
         case CellState::START:
             return COLOR_START;
-            break;
         case CellState::END:
             return COLOR_END;
-            break;
         case CellState::PATH:
             return COLOR_PATH;
-            break;
         default:
             if (field.visited) {
                 return COLOR_VISITED;
             } else {
                 return COLOR_BG;
             }
-            break;
     }
 }

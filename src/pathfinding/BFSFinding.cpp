@@ -69,10 +69,6 @@ namespace path {
         while (current != start) {
             path.push_back(current);
 
-            //if (_grid->at(current.row).at(current.col).state == CellState::EMPTY) {
-            _grid->at(current.row).at(current.col).state = CellState::PATH;
-            //}
-
             current = _grid->at(current.row).at(current.col).parent;
         }
 
@@ -81,6 +77,13 @@ namespace path {
 
         // Pfad umdrehen, um die Reihenfolge zu korrigieren
         std::reverse(path.begin(), path.end());
+
+        for (int i = 0; i < size(path); ++i) {
+            current = path[i];
+            if (_grid->at(current.row).at(current.col).state != CellState::END) {
+                _grid->at(current.row).at(current.col).state = CellState::PATH;
+            }
+        }
 
         return path;
     }
