@@ -8,8 +8,8 @@
 #include "../engine/State.h"
 #include "../Game.h"
 
-
-class SplashState : public engine::State {
+class SplashState : public engine::State
+{
 public:
     SplashState(GameDataRef data);
 
@@ -25,7 +25,9 @@ private:
     GameDataRef _data;
     sf::Clock _clock;
     sf::Sprite _background;
+
+    void loadAssets();
+    void initSprites();
 };
 
-
-#endif //PATHFINDING_SPLASHSTATE_H
+#endif // PATHFINDING_SPLASHSTATE_H

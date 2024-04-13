@@ -5,8 +5,10 @@
 #ifndef PATHFINDING_STATE_H
 #define PATHFINDING_STATE_H
 
-namespace engine {
-    class State {
+namespace engine
+{
+    class State
+    {
     public:
         virtual void init() = 0;
 
@@ -19,7 +21,11 @@ namespace engine {
         virtual void pause() {}
 
         virtual void resume() {}
+
+    private:
+        virtual void loadAssets() = 0;
+        virtual void initSprites() = 0;
     };
 }
 
-#endif //PATHFINDING_STATE_H
+#endif // PATHFINDING_STATE_H

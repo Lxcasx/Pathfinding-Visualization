@@ -5,12 +5,12 @@
 #ifndef PATHFINDING_GAMESTATE_H
 #define PATHFINDING_GAMESTATE_H
 
-
 #include "../engine/State.h"
 #include "../Game.h"
 #include "../Surface.h"
 
-class GameState : public engine::State {
+class GameState : public engine::State
+{
 public:
     GameState(GameDataRef data);
 
@@ -25,7 +25,9 @@ public:
 private:
     GameDataRef _data;
     Surface _surface = Surface(_data);
+
+    void loadAssets();
+    void initSprites();
 };
 
-
-#endif //PATHFINDING_GAMESTATE_H
+#endif // PATHFINDING_GAMESTATE_H

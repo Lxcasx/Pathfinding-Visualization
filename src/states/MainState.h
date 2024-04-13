@@ -8,8 +8,8 @@
 #include "../engine/State.h"
 #include "../Game.h"
 
-
-class MainState : public engine::State {
+class MainState : public engine::State
+{
 public:
     MainState(GameDataRef data);
 
@@ -26,7 +26,9 @@ private:
     sf::Sprite _background;
     sf::Sprite _startButton;
     sf::Sprite _infoButton;
+
+    void loadAssets();
+    void initSprites();
 };
 
-
-#endif //PATHFINDING_MAINSTATE_H
+#endif // PATHFINDING_MAINSTATE_H
