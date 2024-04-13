@@ -39,6 +39,8 @@ add_executable(Pathfinding src/main.cpp
         src/Surface.cpp
         src/Surface.h
         src/Grid.h
+        src/pathfinding/BFSFinding.cpp
+        src/pathfinding/BFSFinding.h
         src/GridMap.cpp
         src/GridMap.h
         src/pathfinding/Pathfinding.h

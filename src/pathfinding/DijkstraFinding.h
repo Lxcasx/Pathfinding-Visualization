@@ -22,9 +22,7 @@ namespace path {
         void constructPath() override;
 
     private:
-        void markVisited(Cell cell);
-
-        std::queue<Cell> _queue;
+        std::queue<Cell> queue;
     };
 }
 

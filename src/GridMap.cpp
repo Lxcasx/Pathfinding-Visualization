@@ -7,46 +7,30 @@
 #include "Grid.h"
 #include "DEFINITIONS.h"
 
-bool GridMap::load(sf::Vector2u tileSize, unsigned int width, unsigned int height) {
+bool GridMap::load(sf::Vector2u tileSize, GridRef grid, unsigned int width, unsigned int height) {
     _tileSize = tileSize;
     _width = width;
     _height = height;
 
-    int gridSize = width / tileSize.x * height / tileSize.x;
-    int vertSize = gridSize * 4;
+    int vertSize = width / tileSize.x * height / tileSize.x * 4;
 
     // resize the vertex array to fit the level size
     _vertices.setPrimitiveType(sf::Quads);
     _vertices.resize(vertSize);
 
-    // resize grid array to fit the level size
-    _grid->resize(gridSize);
-
-    for (int i = 0; i < this->rows; i++) {
-        std::vector <CellField> row;
-
-        for (int j = 0; j < this->cols; j++) {
-            if (j == 0 || j == this->cols - 1 || i == 0 || i == this->rows - 1)
-                row.push_back(CellField{CellState::WALL});
-            else
-                row.push_back(CellField{CellState::EMPTY});
-        }
-
-        grid->push_back(row);
-    }
-
-    update();
+    // populate the vertex array, with two triangles per tile
+    update(grid);
 
     return true;
 }
 
-void GridMap::update() {
+void GridMap::update(GridRef grid) {
     int rows = _width / _tileSize.x;
     int cols = _height / _tileSize.x;
 
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            CellField field = _grid->at(i).at(j);
+            CellField field = (*grid)[i][j];
             sf::Color color = getColor(field);
             sf::VertexArray rect = getRect(i, j, color);
 
@@ -63,10 +47,10 @@ void GridMap::update() {
     }
 }
 
-void GridMap::updateTile(Cell cell) {
+void GridMap::updateTile(GridRef grid, Cell cell) {
     int cols = _height / _tileSize.x;
 
-    CellField field = (*_grid)[cell.row][cell.col];
+    CellField field = (*grid)[cell.row][cell.col];
     sf::Color color = getColor(field);
     sf::VertexArray rect = getRect(cell.row, cell.col, color);
 
@@ -135,137 +119,4 @@ sf::Color GridMap::getColor(CellField field) {
                 return COLOR_BG;
             }
     }
-}
-
-void GridMap::setStart(sf::Vector2i pos) {
-    Cell cell{};
-
-    if (!isPositionInGrid(pos, &cell)) {
-        return;
-    }
-
-    setStart(cell);
-}
-
-void GridMap::setWall(sf::Vector2i pos) {
-    Cell cell{};
-
-    if (!isPositionInGrid(pos, &cell)) {
-        return;
-    }
-
-    setWall(cell);
-}
-
-void GridMap::setWall(Cell pos) {
-    if (lastPos != Cell{-1, -1}) {
-        correctWall(pos, lastPos);
-    }
-
-    lastPos = pos;
-    setCellField(pos, CellState::WALL);
-}
-
-void GridMap::setStart(Cell cell) {
-    CellField field = _grid->at(cell.row).at(cell.col);
-
-    if (field.state == CellState::WALL || field.state == CellState::END)
-        return;
-
-    // delete old start position
-    if (startPos != Cell{-1, -1}) {
-        setCellField(startPos, CellState::EMPTY);
-    }
-
-    startPos = cell;
-    //_path.setStart(startPos);
-
-    setCellField(cell, CellState::START);
-}
-
-void GridMap::setEnd(sf::Vector2i pos) {
-    Cell cell{};
-
-    if (!isPositionInGrid(pos, &cell)) {
-        return;
-    }
-
-    setEnd(cell);
-}
-
-void GridMap::setEnd(Cell cell) {
-    CellField field = _grid->at(cell.row).at(cell.col);
-
-    if (field.state == CellState::WALL || field.state == CellState::START)
-        return;
-
-    // delete old start position
-    if (endPos != Cell{-1, -1}) {
-        setCellField(endPos, CellState::EMPTY);
-    }
-
-    endPos = cell;
-    //_path.setEnd(endPos);
-
-    setCellField(cell, CellState::END);
-}
-
-// Correct the placement of walls that were not captured by the loop using the bresenham line algorithm.
-void GridMap::correctWall(Cell start, Cell end) {
-    int x1 = start.row;
-    int y1 = start.col;
-    int x2 = end.row;
-    int y2 = end.col;
-
-    int dx = std::abs(x2 - x1);
-    int dy = std::abs(y2 - y1);
-
-    int sx = (x1 < x2) ? 1 : -1;
-    int sy = (y1 < y2) ? 1 : -1;
-
-    int err = dx - dy;
-
-    while (true) {
-        setCellField(Cell{x1, y1}, CellState::WALL);
-
-        if (x1 == x2 && y1 == y2) {
-            break;
-        }
-
-        int e2 = 2 * err;
-
-        if (e2 > -dy) {
-            err -= dy;
-            x1 += sx;
-        }
-
-        if (e2 < dx) {
-            err += dx;
-            y1 += sy;
-        }
-    }
-}
-
-bool GridMap::isPositionInGrid(sf::Vector2i pos, Cell *cell) const {
-    const int row = pos.x / _tileSize.x;
-    const int col = pos.y / _tileSize.x;
-    const int rows = _width / _tileSize.x;
-    const int cols = _height / _tileSize.x;
-
-    if (row < 0 || col < 0)
-        return false;
-    if (row >= rows || col >= cols)
-        return false;
-
-    cell->row = row;
-    cell->col = col;
-
-    return true;
-}
-
-void GridMap::setCellField(Cell cell, CellState state) {
-    (*_grid)[cell.row][cell.col].state = state;
-    (*_grid)[cell.row][cell.col].visited = false;
-
-    updateTile(cell);
 }
