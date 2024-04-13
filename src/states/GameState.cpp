@@ -19,7 +19,7 @@ void GameState::init() {
 
 void GameState::handleInput() {
     sf::Event event{};
-    
+
     while (this->_data->window.pollEvent(event)) {
         if (sf::Event::Closed == event.type) {
             this->_data->window.close();
@@ -36,7 +36,13 @@ void GameState::update(float dt) {
 void GameState::draw(float dt) {
     this->_data->window.clear(sf::Color::Red);
 
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
     this->_surface.draw(dt);
+
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+    PLOGD << "drawing took: " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "ms";
 
     this->_data->window.display();
 }

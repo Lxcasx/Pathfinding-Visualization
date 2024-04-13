@@ -25,9 +25,9 @@ namespace path {
         bool isFinished{};
 
     private:
-        Cell _end{};
     protected:
         Cell _start{};
+        Cell _end{};
         GridRef _grid;
     };
 }

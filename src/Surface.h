@@ -49,11 +49,8 @@ private:
 
     void prepare();
 
-    void correctWall(Cell start, Cell end);
-
     void setWall(sf::Vector2i pos);
 
-    void setWall(Cell cell);
 
     void setStart(sf::Vector2i pos);
 
@@ -62,10 +59,6 @@ private:
     void setEnd(sf::Vector2i pos);
 
     void setEnd(Cell cell);
-
-    void setCellField(Cell cell, CellState state);
-
-    bool isPositionInGrid(sf::Vector2i pos, Cell *cell) const;
 };
 
 
