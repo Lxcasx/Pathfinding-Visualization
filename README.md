@@ -1,4 +1,4 @@
-# Simple GUI for visualize pathfinding algorithms
+# Simple UI for visualizing pathfinding algorithm
 
 > currently only the BFS-algorithm is implementet
 

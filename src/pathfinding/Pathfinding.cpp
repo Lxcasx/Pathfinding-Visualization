@@ -5,7 +5,7 @@
 #include "Pathfinding.h"
 
 namespace path {
-    Pathfinding::Pathfinding(GridRef grid) : _grid(grid) {
+    Pathfinding::Pathfinding(GridMap* map) : _map(map) {
     }
 
     void Pathfinding::setStart(Cell start) {

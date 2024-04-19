@@ -1,0 +1,65 @@
+Date : 2024-04-19 10:13:11
+Directory : /home/lucas/repos/Pathfinding-Visualization
+Total : 31 files,  1062 codes, 117 comments, 389 blanks, all 1568 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| C++      |         28 |      1,047 |        117 |        382 |      1,546 |
+| Markdown |          2 |         12 |          0 |          6 |         18 |
+| Log      |          1 |          3 |          0 |          1 |          4 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                            | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                               |         31 |      1,062 |        117 |        389 |      1,568 |
+| . (Files)                                                                       |          1 |         11 |          0 |          6 |         17 |
+| Testing                                                                         |          1 |          3 |          0 |          1 |          4 |
+| Testing/Temporary                                                               |          1 |          3 |          0 |          1 |          4 |
+| src                                                                             |         29 |      1,048 |        117 |        382 |      1,547 |
+| src (Files)                                                                     |          9 |        503 |         38 |        169 |        710 |
+| src/engine                                                                      |          8 |        169 |         21 |         73 |        263 |
+| src/pathfinding                                                                 |          6 |        144 |         36 |         60 |        240 |
+| src/states                                                                      |          6 |        232 |         22 |         80 |        334 |
++---------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                        | language | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| /home/lucas/repos/Pathfinding-Visualization/README.md                           | Markdown |         11 |          0 |          6 |         17 |
+| /home/lucas/repos/Pathfinding-Visualization/Testing/Temporary/LastTest.log      | Log      |          3 |          0 |          1 |          4 |
+| /home/lucas/repos/Pathfinding-Visualization/src/DEFINITIONS.h                   | C++      |         19 |          3 |         10 |         32 |
+| /home/lucas/repos/Pathfinding-Visualization/src/Game.cpp                        | C++      |         32 |          3 |         13 |         48 |
+| /home/lucas/repos/Pathfinding-Visualization/src/Game.h                          | C++      |         23 |          3 |         11 |         37 |
+| /home/lucas/repos/Pathfinding-Visualization/src/Grid.h                          | C++      |         39 |          3 |         12 |         54 |
+| /home/lucas/repos/Pathfinding-Visualization/src/GridMap.cpp                     | C++      |        107 |         10 |         33 |        150 |
+| /home/lucas/repos/Pathfinding-Visualization/src/GridMap.h                       | C++      |         28 |          3 |         10 |         41 |
+| /home/lucas/repos/Pathfinding-Visualization/src/Surface.cpp                     | C++      |        199 |         10 |         52 |        261 |
+| /home/lucas/repos/Pathfinding-Visualization/src/Surface.h                       | C++      |         43 |          3 |         24 |         70 |
+| /home/lucas/repos/Pathfinding-Visualization/src/engine/AssetManager.cpp         | C++      |         32 |          3 |         10 |         45 |
+| /home/lucas/repos/Pathfinding-Visualization/src/engine/AssetManager.h           | C++      |         23 |          3 |         14 |         40 |
+| /home/lucas/repos/Pathfinding-Visualization/src/engine/InputManager.cpp         | C++      |         20 |          3 |          7 |         30 |
+| /home/lucas/repos/Pathfinding-Visualization/src/engine/InputManager.h           | C++      |         14 |          3 |          9 |         26 |
+| /home/lucas/repos/Pathfinding-Visualization/src/engine/README.md                | Markdown |          1 |          0 |          0 |          1 |
+| /home/lucas/repos/Pathfinding-Visualization/src/engine/State.h                  | C++      |         19 |          3 |         10 |         32 |
+| /home/lucas/repos/Pathfinding-Visualization/src/engine/StateMachine.cpp         | C++      |         36 |          3 |         10 |         49 |
+| /home/lucas/repos/Pathfinding-Visualization/src/engine/StateMachine.h           | C++      |         24 |          3 |         13 |         40 |
+| /home/lucas/repos/Pathfinding-Visualization/src/main.cpp                        | C++      |         13 |          0 |          4 |         17 |
+| /home/lucas/repos/Pathfinding-Visualization/src/pathfinding/BFSFinding.cpp      | C++      |         56 |          6 |         16 |         78 |
+| /home/lucas/repos/Pathfinding-Visualization/src/pathfinding/BFSFinding.h        | C++      |         26 |         16 |          6 |         48 |
+| /home/lucas/repos/Pathfinding-Visualization/src/pathfinding/DijkstraFinding.cpp | C++      |         13 |          3 |          9 |         25 |
+| /home/lucas/repos/Pathfinding-Visualization/src/pathfinding/DijkstraFinding.h   | C++      |         17 |          3 |         11 |         31 |
+| /home/lucas/repos/Pathfinding-Visualization/src/pathfinding/Pathfinding.cpp     | C++      |         11 |          5 |          6 |         22 |
+| /home/lucas/repos/Pathfinding-Visualization/src/pathfinding/Pathfinding.h       | C++      |         21 |          3 |         12 |         36 |
+| /home/lucas/repos/Pathfinding-Visualization/src/states/GameState.cpp            | C++      |         40 |          3 |         14 |         57 |
+| /home/lucas/repos/Pathfinding-Visualization/src/states/GameState.h              | C++      |         20 |          3 |         11 |         34 |
+| /home/lucas/repos/Pathfinding-Visualization/src/states/MainState.cpp            | C++      |         79 |          6 |         20 |        105 |
+| /home/lucas/repos/Pathfinding-Visualization/src/states/MainState.h              | C++      |         21 |          3 |         11 |         35 |
+| /home/lucas/repos/Pathfinding-Visualization/src/states/SplashState.cpp          | C++      |         52 |          4 |         13 |         69 |
+| /home/lucas/repos/Pathfinding-Visualization/src/states/SplashState.h            | C++      |         20 |          3 |         11 |         34 |
+| Total                                                                           |          |      1,062 |        117 |        389 |      1,568 |
++---------------------------------------------------------------------------------+----------+------------+------------+------------+------------+

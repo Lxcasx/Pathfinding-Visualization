@@ -6,33 +6,26 @@
 #define PATHFINDING_BFSFINDING_H
 
 #include "../Grid.h"
+#include "Pathfinding.h"
 #include "SFML/Graphics.hpp"
 #include "queue"
 
-namespace path {
-    class BFSFinding {
+namespace path
+{
+    class BFSFinding : public Pathfinding
+    {
     public:
-        BFSFinding(GridRef grid);
-
-        void setStart(Cell start);
-
-        void setEnd(Cell end);
-
-        void nextStep();
-
-        std::vector<Cell> constructPath();
-
-        void clear();
-
-        bool finished = false;
+        BFSFinding(GridMap *map);
+        void setStart(Cell start) override;
+        void setEnd(Cell start) override;
+        void clear() override;
+        void nextStep() override;
+        void constructPath() override;
 
     private:
-        GridRef _grid;
-        Cell start;
-        Cell end;
         std::queue<Cell> queue;
 
         void markVisited(Cell cell);
     };
 }
-#endif //PATHFINDING_BFSFINDING_H
+#endif // PATHFINDING_BFSFINDING_H

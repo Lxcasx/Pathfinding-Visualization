@@ -5,21 +5,22 @@
 #ifndef PATHFINDING_GRIDMAP_H
 #define PATHFINDING_GRIDMAP_H
 
-
 #include "SFML/Graphics/Drawable.hpp"
 #include "SFML/Graphics/Transformable.hpp"
 #include "SFML/Graphics/VertexArray.hpp"
 #include "SFML/Graphics/Texture.hpp"
 #include "Grid.h"
 
-class GridMap : public sf::Drawable, public sf::Transformable {
+class GridMap : public sf::Drawable, public sf::Transformable
+{
 public:
-    bool
-    load(sf::Vector2u tileSize, GridRef grid, unsigned int width, unsigned int height);
-
-    void update(GridRef grid);
-
-    void updateTile(GridRef grid, Cell cell);
+    GridMap(GridRef grid);
+    bool load(sf::Vector2u tileSize, unsigned int width, unsigned int height);
+    void update();
+    void updateTile(Cell cell);
+    void setTile(Cell cell, CellState state);
+    void setVisitedTile(Cell cell);
+    GridRef _grid;
 
 private:
     sf::VertexArray _vertices;
@@ -35,5 +36,4 @@ private:
     sf::Color getColor(CellField field);
 };
 
-
-#endif //PATHFINDING_GRIDMAP_H
+#endif // PATHFINDING_GRIDMAP_H

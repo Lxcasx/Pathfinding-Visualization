@@ -30,7 +30,7 @@ public:
     }
 
     bool operator!=(const Cell &lhs) const {
-        return lhs.row != row && lhs.col != col;
+        return !(lhs == *this);
     }
 
     Cell operator+(const Cell &lhs) const {

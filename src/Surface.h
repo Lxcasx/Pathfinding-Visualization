@@ -5,18 +5,18 @@
 #ifndef PATHFINDING_SURFACE_H
 #define PATHFINDING_SURFACE_H
 
-
 #include "Game.h"
 #include "Grid.h"
 #include "pathfinding/Pathfinding.h"
-#include "pathfinding/DijkstraFinding.h"
+#include "pathfinding/BFSFinding.h"
 #include "GridMap.h"
 
-class Surface {
+class Surface
+{
 public:
     Surface(GameDataRef data);
 
-    void init(int width, int height, float size);
+    void init(int width, int height);
 
     void setPosition(float x, float y);
 
@@ -32,20 +32,18 @@ public:
 
 private:
     GameDataRef _data;
-    GridRef grid = new Grid();
-    path::DijkstraFinding _path;
+    GridRef _grid = new Grid();
+    GridMap _map;
+    path::BFSFinding _path;
 
     int rows{};
     int cols{};
-    int width{};
-    int height{};
-    float size{};
+    int _width{};
+    int _height{};
     Cell lastPos = {-1, -1};
     Cell startPos = {-1, -1};
     Cell endPos = {-1, -1};
     std::vector<int> level;
-
-    GridMap map;
 
     void prepare();
 
@@ -68,5 +66,4 @@ private:
     bool isPositionInGrid(sf::Vector2i pos, Cell *cell) const;
 };
 
-
-#endif //PATHFINDING_SURFACE_H
+#endif // PATHFINDING_SURFACE_H

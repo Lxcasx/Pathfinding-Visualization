@@ -6,11 +6,12 @@
 #define PATHFINDING_PATHFINDING_H
 
 #include "../Grid.h"
+#include "../GridMap.h"
 
 namespace path {
     class Pathfinding {
     public:
-        Pathfinding(GridRef grid);
+        Pathfinding(GridMap* map);
 
         virtual void setStart(Cell start);
 
@@ -24,11 +25,10 @@ namespace path {
 
         bool isFinished{};
 
-    private:
-        Cell _end{};
     protected:
         Cell _start{};
-        GridRef _grid;
+        Cell _end{};
+        GridMap* _map;
     };
 }
 

@@ -8,83 +8,84 @@
 #include "BFSFinding.h"
 #include "plog/Log.h"
 
-namespace path {
-    BFSFinding::BFSFinding(GridRef grid) : _grid(std::move(grid)) {}
+namespace path
+{
+    BFSFinding::BFSFinding(GridMap *map) : Pathfinding(map) {}
 
-    void BFSFinding::setStart(Cell start) {
-        this->start = start;
+    void BFSFinding::setStart(Cell start)
+    {
+        clear();
+        _start = start;
         queue.push(start);
-        this->markVisited(start);
     }
 
-    void BFSFinding::setEnd(Cell end) {
-        this->end = end;
+    void BFSFinding::setEnd(Cell end)
+    {
+        _end = end;
     }
 
-    void BFSFinding::clear() {
-        this->finished = false;
-        this->queue = {};
+    void BFSFinding::clear()
+    {
+        isFinished = false;
+        queue = {};
     }
 
-    void BFSFinding::nextStep() {
+    void BFSFinding::nextStep()
+    {
         std::vector<Cell> directions = {{-1, 0},
-                                        {1,  0},
-                                        {0,  -1},
-                                        {0,  1}}; // 4 mögliche Richtungen
+                                        {1, 0},
+                                        {0, -1},
+                                        {0, 1}}; // 4 possible directions
         Cell current = queue.front();
         queue.pop();
 
-        // Überprüfen, ob der Endpunkt erreicht wurde
-        if (current == end) {
-            // Pfad gefunden, weitere Verarbeitung hier (z.B. speichern oder ausgeben)
-            this->finished = true;
+        // check if we reached the end
+        if (current == _end)
+        {
+            isFinished = true;
             return;
         }
 
-        // Durchlaufe alle Nachbarn
-        for (const Cell &direction: directions) {
+        // check all neighbors
+        for (const Cell &direction : directions)
+        {
             Cell neighbor = current + direction;
 
-            // Überprüfen, ob der Nachbar innerhalb der Gittergrenzen liegt und nicht besucht wurde
-            if (_grid->at(neighbor.row).at(neighbor.col).state != WALL &&
-                !_grid->at(neighbor.row).at(neighbor.col).visited) {
+            // check if the neighbor is valid
+            if (_map->_grid->at(neighbor.row).at(neighbor.col).state != WALL &&
+                !_map->_grid->at(neighbor.row).at(neighbor.col).visited)
+            {
 
                 queue.push(neighbor);
                 markVisited(neighbor);
 
-                _grid->at(neighbor.row).at(neighbor.col).parent = current;
+                _map->_grid->at(neighbor.row).at(neighbor.col).parent = current;
             }
         }
     }
 
-    void BFSFinding::markVisited(Cell cell) {
-        this->_grid->at(cell.row).at(cell.col).visited = true;
+    void BFSFinding::markVisited(Cell cell)
+    {
+        _map->setVisitedTile(cell);
     }
 
-    std::vector<Cell> BFSFinding::constructPath() {
-        // Pfad extrahieren, indem der Elternzeiger zurückverfolgt wird
+    void BFSFinding::constructPath()
+    {
         std::vector<Cell> path;
-        Cell current = end;
-
-        while (current != start) {
-            path.push_back(current);
-
-            current = _grid->at(current.row).at(current.col).parent;
+        
+        for (Cell cell = _end; cell != _start; cell = _map->_grid->at(cell.row).at(cell.col).parent)
+        {
+            path.push_back(cell);
         }
+        path.push_back(_start);                 // don't forget to add the start cell
+        std::reverse(path.begin(), path.end()); // reverse the path to start from the beginning
 
-        // Startpunkt hinzufügen
-        path.push_back(start);
+        for (const Cell &cell : path)
+        {
+            if(cell == _start || cell == _end)
+                continue;
 
-        // Pfad umdrehen, um die Reihenfolge zu korrigieren
-        std::reverse(path.begin(), path.end());
-
-        for (int i = 0; i < size(path); ++i) {
-            current = path[i];
-            if (_grid->at(current.row).at(current.col).state != CellState::END) {
-                _grid->at(current.row).at(current.col).state = CellState::PATH;
-            }
+            _map->setTile(cell, CellState::PATH);
         }
-
-        return path;
     }
 }

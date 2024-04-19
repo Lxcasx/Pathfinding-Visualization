@@ -7,30 +7,38 @@
 #include "Grid.h"
 #include "DEFINITIONS.h"
 
-bool GridMap::load(sf::Vector2u tileSize, GridRef grid, unsigned int width, unsigned int height) {
+GridMap::GridMap(GridRef grid) : _grid(grid)
+{
+}
+
+bool GridMap::load(sf::Vector2u tileSize, unsigned int width, unsigned int height)
+{
     _tileSize = tileSize;
     _width = width;
     _height = height;
 
-    int vertSize = width / tileSize.x * height / tileSize.x * 4;
+    int vertCount = width / tileSize.x * height / tileSize.x * 4;
 
     // resize the vertex array to fit the level size
     _vertices.setPrimitiveType(sf::Quads);
-    _vertices.resize(vertSize);
+    _vertices.resize(vertCount);
 
     // populate the vertex array, with two triangles per tile
-    update(grid);
+    update();
 
     return true;
 }
 
-void GridMap::update(GridRef grid) {
+void GridMap::update()
+{
     int rows = _width / _tileSize.x;
     int cols = _height / _tileSize.x;
 
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            CellField field = (*grid)[i][j];
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
+            CellField field = (*_grid)[i][j];
             sf::Color color = getColor(field);
             sf::VertexArray rect = getRect(i, j, color);
 
@@ -38,7 +46,8 @@ void GridMap::update(GridRef grid) {
             unsigned int p = i * cols + j;
 
             // create 4 vertices per element
-            for (int k = 0; k < 4; ++k) {
+            for (int k = 0; k < 4; ++k)
+            {
                 unsigned int index = (p * 4) + k;
 
                 _vertices[index] = rect[k];
@@ -47,10 +56,30 @@ void GridMap::update(GridRef grid) {
     }
 }
 
-void GridMap::updateTile(GridRef grid, Cell cell) {
+void GridMap::setVisitedTile(Cell cell)
+{
+    CellField *field = &(*_grid)[cell.row][cell.col];
+
+    if (field->state == CellState::EMPTY)
+    {
+        field->visited = true;
+        updateTile(cell);
+    }
+}
+
+void GridMap::setTile(Cell cell, CellState state)
+{
+    (*_grid)[cell.row][cell.col].state = state;
+    (*_grid)[cell.row][cell.col].visited = false;
+
+    updateTile(cell);
+}
+
+void GridMap::updateTile(Cell cell)
+{
     int cols = _height / _tileSize.x;
 
-    CellField field = (*grid)[cell.row][cell.col];
+    CellField field = (*_grid)[cell.row][cell.col];
     sf::Color color = getColor(field);
     sf::VertexArray rect = getRect(cell.row, cell.col, color);
 
@@ -58,21 +87,24 @@ void GridMap::updateTile(GridRef grid, Cell cell) {
     unsigned int p = cell.row * cols + cell.col;
 
     // create 4 vertices per element
-    for (int k = 0; k < 4; ++k) {
+    for (int k = 0; k < 4; ++k)
+    {
         unsigned int index = (p * 4) + k;
 
         _vertices[index] = rect[k];
     }
 }
 
-void GridMap::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+void GridMap::draw(sf::RenderTarget &target, sf::RenderStates states) const
+{
     states.transform *= getTransform();
 
     // draw the vertex array
     target.draw(_vertices, states);
 }
 
-sf::VertexArray GridMap::getRect(int row, int col, sf::Color color) const {
+sf::VertexArray GridMap::getRect(int row, int col, sf::Color color) const
+{
     sf::VertexArray rect(sf::Quads, 4);
     int size = _tileSize.x;
 
@@ -101,22 +133,22 @@ sf::VertexArray GridMap::getRect(int row, int col, sf::Color color) const {
     return rect;
 }
 
+sf::Color GridMap::getColor(CellField field)
+{
+    if (field.visited)
+        return COLOR_VISITED;
 
-sf::Color GridMap::getColor(CellField field) {
-    switch (field.state) {
-        case CellState::WALL:
-            return COLOR_WALL;
-        case CellState::START:
-            return COLOR_START;
-        case CellState::END:
-            return COLOR_END;
-        case CellState::PATH:
-            return COLOR_PATH;
-        default:
-            if (field.visited) {
-                return COLOR_VISITED;
-            } else {
-                return COLOR_BG;
-            }
+    switch (field.state)
+    {
+    case CellState::WALL:
+        return COLOR_WALL;
+    case CellState::START:
+        return COLOR_START;
+    case CellState::END:
+        return COLOR_END;
+    case CellState::PATH:
+        return COLOR_PATH;
+    default:
+        return COLOR_BG;
     }
 }

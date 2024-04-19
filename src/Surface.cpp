@@ -10,80 +10,95 @@
 #include <chrono>
 #include <utility>
 
-Surface::Surface(GameDataRef data) : _data(std::move(data)), _path(grid) {
+Surface::Surface(GameDataRef data) : _data(std::move(data)), _map(_grid), _path(&_map)
+{
 }
 
-void Surface::prepare() {
-    for (int i = 0; i < this->rows; i++) {
+
+void Surface::prepare()
+{
+    for (int i = 0; i < rows; i++)
+    {
         std::vector<CellField> row;
 
-        for (int j = 0; j < this->cols; j++) {
-            if (j == 0 || j == this->cols - 1 || i == 0 || i == this->rows - 1)
+        for (int j = 0; j < cols; j++)
+        {
+            if (j == 0 || j == cols - 1 || i == 0 || i == rows - 1)
                 row.push_back(CellField{CellState::WALL});
             else
                 row.push_back(CellField{CellState::EMPTY});
         }
 
-        grid->push_back(row);
+        _grid->push_back(row);
     }
 
-    level.resize(width * height);
-    map.load(sf::Vector2u(GRID_SIZE, GRID_SIZE), grid, width, height);
+    level.resize(_width * _height);
+    _map.load(sf::Vector2u(GRID_SIZE, GRID_SIZE), _width, _height);
 }
 
-void Surface::init(int width, int height, float size) {
-    this->width = width;
-    this->height = height;
-    this->rows = std::round(width / size);
-    this->cols = std::round(height / size);
-    this->size = size;
+void Surface::init(int width, int height)
+{
+    _width = width;
+    _height = height;
 
-    this->prepare();
+    rows = std::round(_width / GRID_SIZE);
+    cols = std::round(_height / GRID_SIZE);
+
+    prepare();
 }
 
-void Surface::setPosition(float x, float y) {
+void Surface::setPosition(float x, float y)
+{
 }
 
-void Surface::draw(float dt) {
-    _data->window.draw(map);
+void Surface::draw(float dt)
+{
+    _data->window.draw(_map);
 
-    if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && !_path.isFinished) {
+    if (startPos != Cell{-1, -1} && endPos != Cell{-1, -1} && !_path.isFinished)
+    {
         _path.nextStep();
-        map.update(grid);
+        _map.update();
     }
 
-    if (this->startPos != Cell{-1, -1} && this->endPos != Cell{-1, -1} && this->_path.isFinished) {
-        this->_path.constructPath();
-        map.update(grid);
+    if (startPos != Cell{-1, -1} && endPos != Cell{-1, -1} && _path.isFinished)
+    {
+        _path.constructPath();
+        _map.update();
     }
 }
 
-void Surface::update(float dt) {
-
+void Surface::update(float dt)
+{
 }
 
-void Surface::setWall(sf::Vector2i pos) {
+void Surface::setWall(sf::Vector2i pos)
+{
     Cell cell{};
 
-    if (!isPositionInGrid(pos, &cell)) {
+    if (!isPositionInGrid(pos, &cell))
+    {
         return;
     }
 
     setWall(cell);
 }
 
-void Surface::setWall(Cell pos) {
-    if (lastPos != Cell{-1, -1}) {
-        this->correctWall(pos, lastPos);
+void Surface::setWall(Cell pos)
+{
+    if (lastPos != Cell{-1, -1})
+    {
+        correctWall(pos, lastPos);
     }
 
     lastPos = pos;
     setCellField(pos, CellState::WALL);
 }
 
-bool Surface::isPositionInGrid(sf::Vector2i pos, Cell *cell) const {
-    int row = pos.x / this->size;
-    int col = pos.y / this->size;
+bool Surface::isPositionInGrid(sf::Vector2i pos, Cell *cell) const
+{
+    int row = pos.x / GRID_SIZE;
+    int col = pos.y / GRID_SIZE;
 
     if (row < 0 || col < 0)
         return false;
@@ -97,7 +112,8 @@ bool Surface::isPositionInGrid(sf::Vector2i pos, Cell *cell) const {
 }
 
 // Correct the placement of walls that were not captured by the loop using the bresenham line algorithm.
-void Surface::correctWall(Cell start, Cell end) {
+void Surface::correctWall(Cell start, Cell end)
+{
     int x1 = start.row;
     int y1 = start.col;
     int x2 = end.row;
@@ -111,69 +127,94 @@ void Surface::correctWall(Cell start, Cell end) {
 
     int err = dx - dy;
 
-    while (true) {
+    while (true)
+    {
         setCellField(Cell{x1, y1}, CellState::WALL);
 
-        if (x1 == x2 && y1 == y2) {
+        if (x1 == x2 && y1 == y2)
+        {
             break;
         }
 
         int e2 = 2 * err;
 
-        if (e2 > -dy) {
+        if (e2 > -dy)
+        {
             err -= dy;
             x1 += sx;
         }
 
-        if (e2 < dx) {
+        if (e2 < dx)
+        {
             err += dx;
             y1 += sy;
         }
     }
 }
 
-void Surface::handleInput() {
+void Surface::handleInput()
+{
     // draw wall
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
-        this->setWall(sf::Mouse::getPosition(this->_data->window));
-    } else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        this->setStart(sf::Mouse::getPosition(this->_data->window));
-    } else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-        this->setEnd(sf::Mouse::getPosition(this->_data->window));
-    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
-        this->clear();
-    } else {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+    {
+        setWall(sf::Mouse::getPosition(_data->window));
+    }
+    // draw start
+    else if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    {
+        setStart(sf::Mouse::getPosition(_data->window));
+    }
+    // draw end
+    else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+    {
+        setEnd(sf::Mouse::getPosition(_data->window));
+    }
+    // clear
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+    {
+        clear();
+    }
+    else
+    {
         lastPos = Cell{-1, -1};
     }
 }
 
-void Surface::clear() {
-    this->grid->clear();
-    this->prepare();
-    this->_path.clear();
-    this->startPos = Cell{-1, -1};
-    this->endPos = Cell{-1, -1};
-    map.update(grid);
+void Surface::clear()
+{
+    _grid->clear();
+    prepare();
+    _path.clear();
+    startPos = Cell{-1, -1};
+    endPos = Cell{-1, -1};
+    _map.update();
 }
 
-void Surface::setStart(sf::Vector2i pos) {
+void Surface::setStart(sf::Vector2i pos)
+{
+    if(_path.isFinished)
+        return;
+        
     Cell cell{};
 
-    if (!isPositionInGrid(pos, &cell)) {
+    if (!isPositionInGrid(pos, &cell))
+    {
         return;
     }
 
     setStart(cell);
 }
 
-void Surface::setStart(Cell cell) {
-    CellField field = this->grid->at(cell.row).at(cell.col);
+void Surface::setStart(Cell cell)
+{
+    CellField field = _grid->at(cell.row).at(cell.col);
 
     if (field.state == CellState::WALL || field.state == CellState::END)
         return;
 
     // delete old start position
-    if (startPos != Cell{-1, -1}) {
+    if (startPos != Cell{-1, -1})
+    {
         setCellField(startPos, CellState::EMPTY);
     }
 
@@ -183,24 +224,31 @@ void Surface::setStart(Cell cell) {
     setCellField(cell, CellState::START);
 }
 
-void Surface::setEnd(sf::Vector2i pos) {
+void Surface::setEnd(sf::Vector2i pos)
+{
+    if(_path.isFinished)
+        return;
+
     Cell cell{};
 
-    if (!isPositionInGrid(pos, &cell)) {
+    if (!isPositionInGrid(pos, &cell))
+    {
         return;
     }
 
     setEnd(cell);
 }
 
-void Surface::setEnd(Cell cell) {
-    CellField field = this->grid->at(cell.row).at(cell.col);
+void Surface::setEnd(Cell cell)
+{
+    CellField field = _grid->at(cell.row).at(cell.col);
 
     if (field.state == CellState::WALL || field.state == CellState::START)
         return;
 
     // delete old start position
-    if (endPos != Cell{-1, -1}) {
+    if (endPos != Cell{-1, -1})
+    {
         setCellField(endPos, CellState::EMPTY);
     }
 
@@ -210,12 +258,11 @@ void Surface::setEnd(Cell cell) {
     setCellField(cell, CellState::END);
 }
 
-void Surface::save() {
+void Surface::save()
+{
 }
 
-void Surface::setCellField(Cell cell, CellState state) {
-    (*grid)[cell.row][cell.col].state = state;
-    (*grid)[cell.row][cell.col].visited = false;
-
-    map.updateTile(grid, cell);
+void Surface::setCellField(Cell cell, CellState state)
+{
+    _map.setTile(cell, state);
 }

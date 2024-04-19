@@ -12,7 +12,7 @@ GameState::GameState(GameDataRef data) : _data(std::move(data))
 {
     PLOGI << "Initializing game state";
 
-    _surface.init(WINDOW_WIDTH, WINDOW_HEIGHT, GRID_SIZE);
+    _surface.init(WINDOW_WIDTH, WINDOW_HEIGHT);
 }
 
 void GameState::init()
@@ -23,29 +23,29 @@ void GameState::handleInput()
 {
     sf::Event event{};
 
-    while (this->_data->window.pollEvent(event))
+    while (_data->window.pollEvent(event))
     {
         if (sf::Event::Closed == event.type)
         {
-            this->_data->window.close();
+            _data->window.close();
         }
 
-        this->_surface.handleInput();
+        _surface.handleInput();
     }
 }
 
 void GameState::update(float dt)
 {
-    this->_surface.update(dt);
+    _surface.update(dt);
 }
 
 void GameState::draw(float dt)
 {
-    this->_data->window.clear(sf::Color::Red);
+    _data->window.clear(sf::Color::Red);
 
-    this->_surface.draw(dt);
+    _surface.draw(dt);
 
-    this->_data->window.display();
+    _data->window.display();
 }
 
 void GameState::loadAssets()

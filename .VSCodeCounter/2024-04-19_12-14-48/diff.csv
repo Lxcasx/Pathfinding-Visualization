@@ -1,0 +1,10 @@
+"filename", "language", "C++", "comment", "blank", "total"
+"/home/lucas/repos/Pathfinding-Visualization/src/Game.cpp", "C++", 1, 0, 0, 1
+"/home/lucas/repos/Pathfinding-Visualization/src/GridMap.cpp", "C++", 4, 0, 0, 4
+"/home/lucas/repos/Pathfinding-Visualization/src/GridMap.h", "C++", 0, 0, -1, -1
+"/home/lucas/repos/Pathfinding-Visualization/src/Surface.cpp", "C++", 4, 0, 3, 7
+"/home/lucas/repos/Pathfinding-Visualization/src/pathfinding/BFSFinding.cpp", "C++", 13, 0, 0, 13
+"/home/lucas/repos/Pathfinding-Visualization/src/pathfinding/BFSFinding.h", "C++", -3, -13, 0, -16
+"/home/lucas/repos/Pathfinding-Visualization/src/pathfinding/DijkstraFinding.cpp", "C++", -13, -3, -9, -25
+"/home/lucas/repos/Pathfinding-Visualization/src/pathfinding/DijkstraFinding.h", "C++", -17, -3, -11, -31
+"Total", "-", -11, -19, -18, -48
