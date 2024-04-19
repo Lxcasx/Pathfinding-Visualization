@@ -8,10 +8,12 @@
 #include "../Grid.h"
 #include "../GridMap.h"
 
-namespace path {
-    class Pathfinding {
+namespace path
+{
+    class Pathfinding
+    {
     public:
-        Pathfinding(GridMap* map);
+        Pathfinding(GridMap *map);
 
         virtual void setStart(Cell start);
 
@@ -28,8 +30,8 @@ namespace path {
     protected:
         Cell _start{};
         Cell _end{};
-        GridMap* _map;
+        GridMap *_map;
     };
 }
 
-#endif //PATHFINDING_PATHFINDING_H
+#endif // PATHFINDING_PATHFINDING_H

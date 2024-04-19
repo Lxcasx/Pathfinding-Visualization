@@ -4,27 +4,33 @@
 
 #include "InputManager.h"
 
-namespace engine {
-    bool InputManager::isSpriteClicked(const sf::Sprite &object, sf::Mouse::Button button, sf::RenderWindow &window) {
-        if (sf::Mouse::isButtonPressed(button)) {
+namespace engine
+{
+    bool InputManager::isSpriteClicked(const sf::Sprite &object, sf::Mouse::Button button, sf::RenderWindow &window)
+    {
+        if (sf::Mouse::isButtonPressed(button))
+        {
             return isSpriteFloating(object, window);
         }
 
         return false;
     }
 
-    bool InputManager::isSpriteFloating(const sf::Sprite &object, sf::RenderWindow &window) {
+    bool InputManager::isSpriteFloating(const sf::Sprite &object, sf::RenderWindow &window)
+    {
         sf::IntRect tempRect(object.getPosition().x, object.getPosition().y, object.getGlobalBounds().width,
                              object.getGlobalBounds().height);
 
-        if (tempRect.contains(sf::Mouse::getPosition(window))) {
+        if (tempRect.contains(sf::Mouse::getPosition(window)))
+        {
             return true;
         }
 
         return false;
     }
 
-    sf::Vector2i InputManager::getMousePosition(sf::RenderWindow &window) {
+    sf::Vector2i InputManager::getMousePosition(sf::RenderWindow &window)
+    {
         return sf::Mouse::getPosition(window);
     }
 }

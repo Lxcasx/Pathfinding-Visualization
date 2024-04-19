@@ -7,7 +7,8 @@
 
 using namespace std;
 
-int main() {
+int main()
+{
     static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
     plog::init(plog::verbose, &consoleAppender);
 

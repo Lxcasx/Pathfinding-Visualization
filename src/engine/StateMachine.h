@@ -9,10 +9,12 @@
 #include "stack"
 #include "State.h"
 
-namespace engine {
+namespace engine
+{
     typedef std::unique_ptr<State> StateRef;
 
-    class StateMachine {
+    class StateMachine
+    {
     public:
         StateMachine() = default;
 
@@ -36,4 +38,4 @@ namespace engine {
     };
 }
 
-#endif //PATHFINDING_STATEMACHINE_H
+#endif // PATHFINDING_STATEMACHINE_H

@@ -9,8 +9,10 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-namespace engine {
-    class AssetManager {
+namespace engine
+{
+    class AssetManager
+    {
     public:
         AssetManager() = default;
 
@@ -35,5 +37,4 @@ namespace engine {
     };
 }
 
-
-#endif //PATHFINDING_ASSETMANAGER_H
+#endif // PATHFINDING_ASSETMANAGER_H

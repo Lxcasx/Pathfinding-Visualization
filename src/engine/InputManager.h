@@ -7,8 +7,10 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace engine {
-    class InputManager {
+namespace engine
+{
+    class InputManager
+    {
     public:
         InputManager() = default;
 
@@ -22,4 +24,4 @@ namespace engine {
     };
 }
 
-#endif //PATHFINDING_INPUTMANAGER_H
+#endif // PATHFINDING_INPUTMANAGER_H

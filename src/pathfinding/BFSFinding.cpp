@@ -72,7 +72,7 @@ namespace path
     void BFSFinding::constructPath()
     {
         std::vector<Cell> path;
-        
+
         for (Cell cell = _end; cell != _start; cell = _map->_grid->at(cell.row).at(cell.col).parent)
         {
             path.push_back(cell);
@@ -82,7 +82,7 @@ namespace path
 
         for (const Cell &cell : path)
         {
-            if(cell == _start || cell == _end)
+            if (cell == _start || cell == _end)
                 continue;
 
             _map->setTile(cell, CellState::PATH);

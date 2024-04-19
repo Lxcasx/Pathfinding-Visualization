@@ -10,7 +10,8 @@
 #include "engine/AssetManager.h"
 #include "engine/InputManager.h"
 
-struct GameData {
+struct GameData
+{
     engine::StateMachine machine;
     engine::AssetManager assets;
     engine::InputManager input;
@@ -19,7 +20,8 @@ struct GameData {
 
 typedef std::shared_ptr<GameData> GameDataRef;
 
-class Game {
+class Game
+{
 public:
     Game(int width, int height, const std::string &title);
 
@@ -32,5 +34,4 @@ private:
     void run();
 };
 
-
-#endif //PATHFINDING_GAME_H
+#endif // PATHFINDING_GAME_H

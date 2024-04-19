@@ -14,7 +14,6 @@ Surface::Surface(GameDataRef data) : _data(std::move(data)), _map(_grid), _path(
 {
 }
 
-
 void Surface::prepare()
 {
     for (int i = 0; i < rows; i++)
@@ -192,9 +191,9 @@ void Surface::clear()
 
 void Surface::setStart(sf::Vector2i pos)
 {
-    if(_path.isFinished)
+    if (_path.isFinished)
         return;
-        
+
     Cell cell{};
 
     if (!isPositionInGrid(pos, &cell))
@@ -226,7 +225,7 @@ void Surface::setStart(Cell cell)
 
 void Surface::setEnd(sf::Vector2i pos)
 {
-    if(_path.isFinished)
+    if (_path.isFinished)
         return;
 
     Cell cell{};

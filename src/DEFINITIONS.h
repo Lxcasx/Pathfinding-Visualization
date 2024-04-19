@@ -20,7 +20,6 @@ constexpr float GRID_SIZE = 16.f;
 
 #define GAME_STATE_WALL_SOUND_FILEPATH "./resources/res/sounds/wall_click.wav"
 
-
 const sf::Color COLOR_START(0, 255, 94, 255);
 const sf::Color COLOR_END(255, 74, 54, 255);
 const sf::Color COLOR_BG(28, 28, 28, 255);
@@ -28,4 +27,4 @@ const sf::Color COLOR_WALL(250, 250, 250, 255);
 const sf::Color COLOR_VISITED(66, 135, 245, 255);
 const sf::Color COLOR_PATH(255, 230, 69, 255);
 
-#endif //PATHFINDING_DEFINITIONS_H
+#endif // PATHFINDING_DEFINITIONS_H

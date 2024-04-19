@@ -12,7 +12,8 @@
 
 using namespace std;
 
-enum CellState {
+enum CellState
+{
     EMPTY,
     WALL,
     START,
@@ -20,28 +21,32 @@ enum CellState {
     PATH
 };
 
-class Cell {
+class Cell
+{
 public:
     int row;
     int col;
 
-    bool operator==(const Cell &lhs) const {
+    bool operator==(const Cell &lhs) const
+    {
         return lhs.row == row && lhs.col == col;
     }
 
-    bool operator!=(const Cell &lhs) const {
+    bool operator!=(const Cell &lhs) const
+    {
         return !(lhs == *this);
     }
 
-    Cell operator+(const Cell &lhs) const {
+    Cell operator+(const Cell &lhs) const
+    {
         return Cell{
-                row + lhs.row,
-                col + lhs.col
-        };
+            row + lhs.row,
+            col + lhs.col};
     }
 };
 
-struct CellField {
+struct CellField
+{
     CellState state = CellState::EMPTY;
     bool visited = false;
     Cell parent = {-1, -1};
@@ -50,4 +55,4 @@ struct CellField {
 typedef vector<vector<CellField>> Grid;
 typedef Grid *GridRef;
 
-#endif //PATHFINDING_GRID_H
+#endif // PATHFINDING_GRID_H
