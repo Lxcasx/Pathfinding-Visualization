@@ -2,6 +2,8 @@
 
 > This project is a simple user interface for visualizing pathfinding algorithms. Currently, it only implements the Breadth-First Search (BFS) algorithm. The application allows users to interactively set start and end points, draw walls, and clear the grid. The BFS algorithm then finds the shortest path from the start point to the end point, navigating around the walls. The project uses the SFML multimedia library for the graphical interface, PLOG for logging, and a game engine based on a YouTube tutorial.
 
+![Screenhot](./images/screen1.png)
+
 ## How to use
 
 1. Starting the Application: After installing the application, open it. You should see a grid displayed on the screen.
