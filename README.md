@@ -20,7 +20,7 @@
 
 Remember, the application uses the Breadth-First Search (BFS) algorithm for pathfinding. This algorithm guarantees to find the shortest path, but it may not be the fastest algorithm if the grid is large.
 
-## Keys
+## Keybindings
 
 | Key                                       | Function        |
 | ----------------------------------------- | --------------- |
@@ -29,6 +29,28 @@ Remember, the application uses the Breadth-First Search (BFS) algorithm for path
 | <kbd>Right Mouse</kbd>                    | Set endpoint    |
 | <kbd>C</kbd>                              | Clear the Grid  |
 
+## Build
+Make shure sfml and dependencies are installed
+```bash
+sudo apt install libsfml-dev
+sudo apt-get install libpthread-stubs0-dev
+sudo apt-get install libgl1-mesa-dev
+sudo apt-get install libx11-dev
+sudo apt-get install libxrandr-dev
+sudo apt-get install libfreetype6-dev
+sudo apt-get install libglew1.5-dev
+sudo apt-get install libjpeg8-dev
+sudo apt-get install libsndfile1-dev
+sudo apt-get install libopenal-dev
+```
+Enter the project root with terminal
+```bash
+cmake . .
+cmake --build . --config Release
+```
+
+## Pre Build
+The prebuild was compiled for linux (ubuntu) amd64.
 
 ## Credits
 * SFML: https://github.com/SFML/SFML
