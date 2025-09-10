@@ -22,11 +22,9 @@ void SplashState::init()
 
 void SplashState::handleInput()
 {
-    sf::Event event;
-
-    while (_data->window.pollEvent(event))
+    while (auto event = _data->window.pollEvent())
     {
-        if (sf::Event::Closed == event.type)
+        if (event->is<sf::Event::Closed>())
         {
             _data->window.close();
         }
@@ -46,7 +44,8 @@ void SplashState::draw(float dt)
 {
     _data->window.clear(sf::Color::Red);
 
-    _data->window.draw(_background);
+    if (_background)
+        _data->window.draw(*_background);
 
     _data->window.display();
 }
@@ -60,10 +59,10 @@ void SplashState::loadAssets()
 void SplashState::initSprites()
 {
     PLOGI << "Initializing sprites";
-    _background.setTexture(_data->assets.getTexture("splash_background"));
+    _background = sf::Sprite(_data->assets.getTexture("splash_background"));
 
     // scale the background to the window size
-    float scaleX = (float)_data->window.getSize().x / _background.getTexture()->getSize().x;
-    float scaleY = (float)_data->window.getSize().y / _background.getTexture()->getSize().y;
-    _background.setScale(scaleX, scaleY);
+    float scaleX = (float)_data->window.getSize().x / _background->getTexture().getSize().x;
+    float scaleY = (float)_data->window.getSize().y / _background->getTexture().getSize().y;
+    _background->setScale(sf::Vector2f(scaleX, scaleY));
 }

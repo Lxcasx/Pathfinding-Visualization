@@ -5,11 +5,25 @@
 #ifndef PATHFINDING_DEFINITIONS_H
 #define PATHFINDING_DEFINITIONS_H
 
+#include "SFML/Graphics.hpp"
+
 constexpr unsigned int WINDOW_WIDTH = 1280;
 constexpr unsigned int WINDOW_HEIGHT = 800;
-constexpr float GRID_SIZE = 16.f;
+constexpr float GRID_SIZE = 20.f; // Increased from 16 to 20 for better performance (fewer cells)
 
 #define WINDOW_TITLE "Pathfinding Visualization - by Lucas Heinschke"
+
+// Performance settings
+#define PATHFINDING_BATCH_SIZE 8 // Process multiple cells per frame
+#define MAX_DIRTY_TILES_PER_FRAME 100 // Limit tile updates per frame
+
+// Pathfinding algorithm types
+enum class PathfindingAlgorithm {
+    BFS,      // Breadth-First Search
+    DFS,      // Depth-First Search  
+    DIJKSTRA, // Dijkstra's Algorithm
+    ASTAR     // A* Algorithm
+};
 
 #define SPLASH_STATE_SHOW_TIME 3.0
 #define SPLASH_STATE_BACKGROUND_FILEPATH "./resources/res/images/splash_state_background.png"

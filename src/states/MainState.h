@@ -7,6 +7,7 @@
 
 #include "../engine/State.h"
 #include "../Game.h"
+#include <optional>
 
 class MainState : public engine::State
 {
@@ -23,9 +24,9 @@ public:
 
 private:
     GameDataRef _data;
-    sf::Sprite _background;
-    sf::Sprite _startButton;
-    sf::Sprite _infoButton;
+    std::optional<sf::Sprite> _background;
+    std::optional<sf::Sprite> _startButton;
+    std::optional<sf::Sprite> _infoButton;
 
     void loadAssets();
     void initSprites();

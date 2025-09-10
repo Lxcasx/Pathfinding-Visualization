@@ -26,6 +26,7 @@ namespace path
         virtual void constructPath() = 0;
 
         bool isFinished{};
+        bool pathConstructed{};
 
     protected:
         Cell _start{};

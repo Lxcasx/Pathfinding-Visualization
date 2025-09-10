@@ -1,90 +1,98 @@
 //
-// Created by lucas on 29.01.24.
+// Created by Lucas Heinschke on 10.09.25.
 //
 
-#include <list>
-#include <queue>
-#include <utility>
-#include "BFSFinding.h"
+#include <stack>
+#include "DFSFinding.h"
 #include "plog/Log.h"
 #include "../DEFINITIONS.h"
 
 namespace path
 {
-    BFSFinding::BFSFinding(GridMap *map) : Pathfinding(map) {}
+    DFSFinding::DFSFinding(GridMap *map) : Pathfinding(map) {}
 
-    void BFSFinding::setStart(Cell start)
+    void DFSFinding::setStart(Cell start)
     {
         clear();
         _start = start;
-        queue.push(start);
+        stack.push(start);
     }
 
-    void BFSFinding::setEnd(Cell end)
+    void DFSFinding::setEnd(Cell end)
     {
         _end = end;
     }
 
-    void BFSFinding::clear()
+    void DFSFinding::clear()
     {
         isFinished = false;
         pathConstructed = false;
-        queue = {};
+        stack = {};
         _stepCounter = 0;
-        _batchSize = PATHFINDING_BATCH_SIZE; // Use defined batch size for consistent performance
+        _batchSize = PATHFINDING_BATCH_SIZE;
     }
 
-    void BFSFinding::nextStep()
+    void DFSFinding::nextStep()
     {
-        std::vector<Cell> directions = {{-1, 0},
-                                        {1, 0},
-                                        {0, -1},
-                                        {0, 1}}; // 4 possible directions
+        std::vector<Cell> directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}}; // 4 possible directions
         
         // Process multiple cells per frame for better performance
-        for (int batch = 0; batch < _batchSize && !queue.empty(); ++batch)
+        for (int batch = 0; batch < _batchSize && !stack.empty(); ++batch)
         {
-            Cell current = queue.front();
-            queue.pop();
+            Cell current = stack.top();
+            stack.pop();
 
-            // check if we reached the end
+            // Skip if already visited
+            if (_map->_grid->at(current.row).at(current.col).visited)
+                continue;
+
+            // Mark as visited
+            markVisited(current);
+
+            // Check if we reached the end
             if (current == _end)
             {
                 isFinished = true;
                 return;
             }
 
-            // check all neighbors
-            for (const Cell &direction : directions)
+            // Add neighbors to stack (in reverse order for consistent direction preference)
+            for (int i = directions.size() - 1; i >= 0; --i)
             {
-                Cell neighbor = current + direction;
+                Cell neighbor = current + directions[i];
 
-                // Bounds checking optimization
+                // Bounds checking
                 if (neighbor.row < 0 || neighbor.col < 0 || 
                     neighbor.row >= _map->_grid->size() || 
                     neighbor.col >= _map->_grid->at(0).size())
                     continue;
 
-                // check if the neighbor is valid
+                // Check if the neighbor is valid
                 if (_map->_grid->at(neighbor.row).at(neighbor.col).state != WALL &&
                     !_map->_grid->at(neighbor.row).at(neighbor.col).visited)
                 {
-                    queue.push(neighbor);
-                    markVisited(neighbor);
+                    stack.push(neighbor);
                     _map->_grid->at(neighbor.row).at(neighbor.col).parent = current;
                 }
             }
         }
         
+        // If stack is empty and we haven't found the end, no path exists
+        if (stack.empty() && !isFinished)
+        {
+            isFinished = true;
+            PLOGI << "DFS pathfinding completed - no path found";
+        }
+
         _stepCounter++;
     }
 
-    void BFSFinding::markVisited(Cell cell)
+    void DFSFinding::markVisited(Cell cell)
     {
         _map->setVisitedTile(cell);
     }
 
-    void BFSFinding::constructPath()
+    void DFSFinding::constructPath()
     {
         if (pathConstructed) return; // Don't construct path multiple times
         
@@ -103,7 +111,7 @@ namespace path
             // Check if parent is valid
             if (parent.row == -1 && parent.col == -1) {
                 // Invalid parent, path is broken
-                PLOGE << "Path reconstruction failed: invalid parent chain";
+                PLOGE << "DFS path reconstruction failed: invalid parent chain";
                 return;
             }
             
@@ -112,7 +120,7 @@ namespace path
         }
         
         if (iterations >= maxIterations) {
-            PLOGE << "Path reconstruction failed: maximum iterations reached";
+            PLOGE << "DFS path reconstruction failed: maximum iterations reached";
             return;
         }
         
@@ -129,6 +137,6 @@ namespace path
         }
         
         pathConstructed = true;
-        PLOGI << "Path constructed successfully with " << path.size() << " cells";
+        PLOGI << "DFS path constructed successfully with " << path.size() << " cells";
     }
 }

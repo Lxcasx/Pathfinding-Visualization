@@ -8,13 +8,13 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 include(FetchContent)
 FetchContent_Declare(SFML
         GIT_REPOSITORY https://github.com/SFML/SFML.git
-        GIT_TAG 2.6.x)
+        GIT_TAG 3.0.x)
 FetchContent_MakeAvailable(SFML)
 
 include(FetchContent)
 FetchContent_Declare(plog
         GIT_REPOSITORY https://github.com/SergiusTheBest/plog.git
-        GIT_TAG 1.1.10)
+        GIT_TAG 1.1.11)
 FetchContent_MakeAvailable(plog)
 include_directories(${plog_SOURCE_DIR}/include)
 add_compile_definitions(PLOG_ENABLE_WCHAR_INPUT)
@@ -44,7 +44,15 @@ add_executable(Pathfinding src/main.cpp
         src/GridMap.cpp
         src/GridMap.h
         src/pathfinding/Pathfinding.h
-        src/pathfinding/Pathfinding.cpp)
+        src/pathfinding/Pathfinding.cpp
+        src/pathfinding/AStarFinding.cpp
+        src/pathfinding/AStarFinding.h
+        src/pathfinding/DFSFinding.cpp
+        src/pathfinding/DFSFinding.h
+        src/pathfinding/DijkstraFinding.cpp
+        src/pathfinding/DijkstraFinding.h
+        src/pathfinding/PathfindingFactory.cpp
+        src/pathfinding/PathfindingFactory.h)
 
 
 target_link_libraries(Pathfinding PRIVATE sfml-graphics)

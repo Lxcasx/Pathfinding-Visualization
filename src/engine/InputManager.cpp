@@ -18,8 +18,8 @@ namespace engine
 
     bool InputManager::isSpriteFloating(const sf::Sprite &object, sf::RenderWindow &window)
     {
-        sf::IntRect tempRect(object.getPosition().x, object.getPosition().y, object.getGlobalBounds().width,
-                             object.getGlobalBounds().height);
+        sf::IntRect tempRect(sf::Vector2i(object.getPosition().x, object.getPosition().y), 
+                             sf::Vector2i(object.getGlobalBounds().size.x, object.getGlobalBounds().size.y));
 
         if (tempRect.contains(sf::Mouse::getPosition(window)))
         {

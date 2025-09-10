@@ -3,15 +3,16 @@
 //
 
 #include "Surface.h"
-#include "pathfinding/BFSFinding.h"
+#include "pathfinding/PathfindingFactory.h"
 #include "plog/Log.h"
 #include "DEFINITIONS.h"
 #include <cmath>
 #include <chrono>
 #include <utility>
 
-Surface::Surface(GameDataRef data) : _data(std::move(data)), _map(_grid), _path(&_map)
+Surface::Surface(GameDataRef data) : _data(std::move(data)), _grid(&_gridData), _map(_grid), _currentAlgorithm(PathfindingAlgorithm::BFS)
 {
+    _pathfinder = path::PathfindingFactory::createPathfinder(_currentAlgorithm, &_map);
 }
 
 void Surface::prepare()
@@ -52,18 +53,24 @@ void Surface::setPosition(float x, float y)
 
 void Surface::draw(float dt)
 {
+    // Only update if there are dirty tiles to flush
+    if (!_map.getDirtyTiles().empty()) {
+        _map.flushDirtyTiles();
+    }
+    
     _data->window.draw(_map);
 
-    if (startPos != Cell{-1, -1} && endPos != Cell{-1, -1} && !_path.isFinished)
+    if (startPos != Cell{-1, -1} && endPos != Cell{-1, -1} && !_pathfinder->isFinished)
     {
-        _path.nextStep();
-        _map.update();
+        _pathfinder->nextStep();
+        // Note: Individual tiles are marked dirty in the pathfinding algorithm
     }
 
-    if (startPos != Cell{-1, -1} && endPos != Cell{-1, -1} && _path.isFinished)
+    if (startPos != Cell{-1, -1} && endPos != Cell{-1, -1} && _pathfinder->isFinished && !_pathfinder->pathConstructed)
     {
-        _path.constructPath();
-        _map.update();
+        _pathfinder->constructPath();
+        // Immediately flush all dirty tiles for complete path visualization
+        _map.flushDirtyTilesImmediate();
     }
 }
 
@@ -96,13 +103,13 @@ void Surface::setWall(Cell pos)
 
 bool Surface::isPositionInGrid(sf::Vector2i pos, Cell *cell) const
 {
+    // Optimized bounds checking with early return
+    if (pos.x < 0 || pos.y < 0) return false;
+    
     int row = pos.x / GRID_SIZE;
     int col = pos.y / GRID_SIZE;
 
-    if (row < 0 || col < 0)
-        return false;
-    if (row >= rows || col >= cols)
-        return false;
+    if (row >= rows || col >= cols) return false;
 
     cell->row = row;
     cell->col = col;
@@ -154,24 +161,19 @@ void Surface::correctWall(Cell start, Cell end)
 void Surface::handleInput()
 {
     // draw wall
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift))
     {
         setWall(sf::Mouse::getPosition(_data->window));
     }
     // draw start
-    else if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
         setStart(sf::Mouse::getPosition(_data->window));
     }
     // draw end
-    else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+    else if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
     {
         setEnd(sf::Mouse::getPosition(_data->window));
-    }
-    // clear
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
-    {
-        clear();
     }
     else
     {
@@ -183,15 +185,15 @@ void Surface::clear()
 {
     _grid->clear();
     prepare();
-    _path.clear();
+    _pathfinder->clear();
     startPos = Cell{-1, -1};
     endPos = Cell{-1, -1};
-    _map.update();
+    _map.setFullUpdateNeeded();
 }
 
 void Surface::setStart(sf::Vector2i pos)
 {
-    if (_path.isFinished)
+    if (_pathfinder->isFinished)
         return;
 
     Cell cell{};
@@ -218,14 +220,14 @@ void Surface::setStart(Cell cell)
     }
 
     startPos = cell;
-    _path.setStart(startPos);
+    _pathfinder->setStart(startPos);
 
     setCellField(cell, CellState::START);
 }
 
 void Surface::setEnd(sf::Vector2i pos)
 {
-    if (_path.isFinished)
+    if (_pathfinder->isFinished)
         return;
 
     Cell cell{};
@@ -252,7 +254,7 @@ void Surface::setEnd(Cell cell)
     }
 
     endPos = cell;
-    _path.setEnd(endPos);
+    _pathfinder->setEnd(endPos);
 
     setCellField(cell, CellState::END);
 }
@@ -264,4 +266,29 @@ void Surface::save()
 void Surface::setCellField(Cell cell, CellState state)
 {
     _map.setTile(cell, state);
+}
+
+void Surface::switchAlgorithm()
+{
+    // Get the next algorithm
+    PathfindingAlgorithm oldAlgorithm = _currentAlgorithm;
+    _currentAlgorithm = path::PathfindingFactory::getNextAlgorithm(_currentAlgorithm);
+    
+    // Create new pathfinder
+    try {
+        _pathfinder = path::PathfindingFactory::createPathfinder(_currentAlgorithm, &_map);
+    } catch (const std::exception& e) {
+        PLOGE << "Failed to create pathfinder: " << e.what();
+        // Fallback to BFS if creation fails
+        _currentAlgorithm = PathfindingAlgorithm::BFS;
+        _pathfinder = path::PathfindingFactory::createPathfinder(_currentAlgorithm, &_map);
+    }
+    
+    // Clear the grid and reset start/end positions
+    clear();
+}
+
+std::string Surface::getCurrentAlgorithmName() const
+{
+    return path::PathfindingFactory::getAlgorithmName(_currentAlgorithm);
 }

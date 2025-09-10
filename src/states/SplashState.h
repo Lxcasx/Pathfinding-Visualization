@@ -7,6 +7,7 @@
 
 #include "../engine/State.h"
 #include "../Game.h"
+#include <optional>
 
 class SplashState : public engine::State
 {
@@ -24,7 +25,7 @@ public:
 private:
     GameDataRef _data;
     sf::Clock _clock;
-    sf::Sprite _background;
+    std::optional<sf::Sprite> _background;
 
     void loadAssets();
     void initSprites();

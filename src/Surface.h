@@ -9,7 +9,9 @@
 #include "Grid.h"
 #include "pathfinding/Pathfinding.h"
 #include "pathfinding/BFSFinding.h"
+#include "pathfinding/PathfindingFactory.h"
 #include "GridMap.h"
+#include <memory>
 
 class Surface
 {
@@ -29,12 +31,18 @@ public:
     void clear();
 
     void save();
+    
+    void switchAlgorithm();
+    
+    std::string getCurrentAlgorithmName() const;
 
 private:
     GameDataRef _data;
-    GridRef _grid = new Grid();
+    Grid _gridData;  // Actual grid data
+    GridRef _grid;   // Pointer to grid data
     GridMap _map;
-    path::BFSFinding _path;
+    std::unique_ptr<path::Pathfinding> _pathfinder;
+    PathfindingAlgorithm _currentAlgorithm;
 
     int rows{};
     int cols{};

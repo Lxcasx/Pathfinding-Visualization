@@ -27,7 +27,7 @@ namespace engine
     {
         sf::Font font;
 
-        if (font.loadFromFile(fileName))
+        if (font.openFromFile(fileName))
         {
             _fonts[name] = font;
         }

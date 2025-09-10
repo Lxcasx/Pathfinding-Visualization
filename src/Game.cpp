@@ -11,8 +11,12 @@ Game::Game(int width, int height, const std::string &title)
 {
     PLOGI << "Initializing the game.";
 
-    _data->window.create(sf::VideoMode(width, height), title, sf::Style::Close | sf::Style::Titlebar);
-    _data->window.setFramerateLimit(120);
+    _data->window.create(sf::VideoMode(sf::Vector2u(width, height)), title, sf::Style::Close | sf::Style::Titlebar);
+    _data->window.setFramerateLimit(60); // Reduced from 120 to 60 for better performance
+    
+    // Enable VSync for smoother rendering
+    _data->window.setVerticalSyncEnabled(true);
+    
     _data->machine.addState(engine::StateRef(new SplashState(this->_data)));
 
     this->run();
