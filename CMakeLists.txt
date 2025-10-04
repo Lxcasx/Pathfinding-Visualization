@@ -52,7 +52,11 @@ add_executable(Pathfinding src/main.cpp
         src/pathfinding/DijkstraFinding.cpp
         src/pathfinding/DijkstraFinding.h
         src/pathfinding/PathfindingFactory.cpp
-        src/pathfinding/PathfindingFactory.h)
+        src/pathfinding/PathfindingFactory.h
+        src/ui/Button.cpp
+        src/ui/Button.h
+        src/ui/UIManager.cpp
+        src/ui/UIManager.h)
 
 
 target_link_libraries(Pathfinding PRIVATE sfml-graphics)

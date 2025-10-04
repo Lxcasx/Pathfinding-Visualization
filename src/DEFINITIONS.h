@@ -25,7 +25,7 @@ enum class PathfindingAlgorithm {
     ASTAR     // A* Algorithm
 };
 
-#define SPLASH_STATE_SHOW_TIME 3.0
+#define SPLASH_STATE_SHOW_TIME 1.0
 #define SPLASH_STATE_BACKGROUND_FILEPATH "./resources/res/images/splash_state_background.png"
 
 #define MAIN_STATE_BACKGROUND_FILEPATH "./resources/res/images/main_state_background.png"

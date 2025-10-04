@@ -7,6 +7,8 @@
 
 #include "../engine/State.h"
 #include "../Game.h"
+#include "../ui/UIManager.h"
+#include "../ui/Button.h"
 #include <optional>
 
 class MainState : public engine::State
@@ -25,11 +27,16 @@ public:
 private:
     GameDataRef _data;
     std::optional<sf::Sprite> _background;
-    std::optional<sf::Sprite> _startButton;
-    std::optional<sf::Sprite> _infoButton;
+
+    // UI Components
+    ui::UIManager _uiManager;
+    std::shared_ptr<ui::Button> _startButton;
+    std::shared_ptr<ui::Button> _infoButton;
+    std::shared_ptr<ui::Button> _exitButton;
 
     void loadAssets();
     void initSprites();
+    void setupUI();
 };
 
 #endif // PATHFINDING_MAINSTATE_H

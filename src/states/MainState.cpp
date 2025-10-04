@@ -19,6 +19,7 @@ void MainState::init()
 
     loadAssets();
     initSprites();
+    setupUI();
 }
 
 void MainState::handleInput()
@@ -29,36 +30,15 @@ void MainState::handleInput()
         {
             _data->window.close();
         }
-
-        // hover effect for start button
-        if (_startButton && _data->input.isSpriteFloating(*_startButton, _data->window))
-        {
-            _startButton->setColor(sf::Color(255, 255, 255, 150));
-        }
-        else if (_startButton)
-        {
-            _startButton->setColor(sf::Color(255, 255, 255, 255));
-        }
-
-        // hover effect for info button
-        if (_infoButton && _data->input.isSpriteFloating(*_infoButton, _data->window))
-        {
-            _infoButton->setColor(sf::Color(255, 255, 255, 150));
-        }
-        else if (_infoButton)
-        {
-            _infoButton->setColor(sf::Color(255, 255, 255, 255));
-        }
-
-        if (_startButton && _data->input.isSpriteClicked(*_startButton, sf::Mouse::Button::Left, _data->window))
-        {
-            _data->machine.addState(engine::StateRef(new GameState(_data)), true);
-        }
+        
+        // No need for manual hover/click handling - UI buttons handle this automatically
     }
 }
 
 void MainState::update(float dt)
 {
+    // Update UI components
+    _uiManager.update(_data->window);
 }
 
 void MainState::draw(float dt)
@@ -67,10 +47,9 @@ void MainState::draw(float dt)
 
     if (_background)
         _data->window.draw(*_background);
-    if (_startButton)
-        _data->window.draw(*_startButton);
-    if (_infoButton)
-        _data->window.draw(*_infoButton);
+
+    // Draw UI components (buttons are now handled by UIManager)
+    _uiManager.draw(_data->window);
 
     _data->window.display();
 }
@@ -79,8 +58,7 @@ void MainState::loadAssets()
 {
     PLOGI << "Loading assets";
     _data->assets.loadTexture("main_background", MAIN_STATE_BACKGROUND_FILEPATH);
-    _data->assets.loadTexture("main_start_button", MAIN_STATE_START_BUTTON_FILEPATH);
-    _data->assets.loadTexture("main_info_button", MAIN_STATE_INFO_BUTTON_FILEPATH);
+    _data->assets.loadFont("ui_font", "./resources/res/fonts/Electrolize-Regular.ttf");
 }
 
 void MainState::initSprites()
@@ -88,19 +66,77 @@ void MainState::initSprites()
     PLOGI << "Initializing sprites";
 
     _background = sf::Sprite(_data->assets.getTexture("main_background"));
-    _startButton = sf::Sprite(_data->assets.getTexture("main_start_button"));
-    _infoButton = sf::Sprite(_data->assets.getTexture("main_info_button"));
 
     // scale the background to the window size
     float scaleX = (float)_data->window.getSize().x / _background->getTexture().getSize().x;
     float scaleY = (float)_data->window.getSize().y / _background->getTexture().getSize().y;
     _background->setScale(sf::Vector2f(scaleX, scaleY));
+}
 
-    int btnX = (WINDOW_WIDTH / 2) - (_startButton->getGlobalBounds().size.x / 2);
-    int btnY = (WINDOW_HEIGHT / 1.8f) - (_startButton->getGlobalBounds().size.y / 2);
-    _startButton->setPosition(sf::Vector2f(btnX, btnY));
-
-    btnX = (WINDOW_WIDTH / 2) - (_infoButton->getGlobalBounds().size.x / 2);
-    btnY = (WINDOW_HEIGHT / 1.35f) - (_infoButton->getGlobalBounds().size.y / 2);
-    _infoButton->setPosition(sf::Vector2f(btnX, btnY));
+void MainState::setupUI()
+{
+    PLOGI << "Setting up UI components";
+    
+    // Get font from asset manager
+    sf::Font& font = _data->assets.getFont("ui_font");
+    
+    // Create Start button in center position (text-based)
+    float centerX = WINDOW_WIDTH / 2.0f;
+    _startButton = std::make_shared<ui::Button>(
+        font,
+        "START GAME",
+        sf::Vector2f(centerX - 200, WINDOW_HEIGHT / 1.8f - 25),
+        sf::Vector2f(400, 50)
+    );
+    _startButton->setOnClickCallback([this]() {
+        PLOGI << "Start button clicked!";
+        _data->machine.addState(engine::StateRef(new GameState(_data)), true);
+    });
+    _startButton->setColors(
+        sf::Color(28, 28, 28),   // Normal
+        sf::Color(32, 32, 32),  // Hovered
+        sf::Color(24, 24, 24),   // Pressed
+        sf::Color(100, 100, 100)   // Disabled
+    );
+    _uiManager.addButton(_startButton);
+    
+    // Create Info button below start button (text-based)
+    _infoButton = std::make_shared<ui::Button>(
+        font,
+        "INFO",
+        sf::Vector2f(centerX - 200, WINDOW_HEIGHT / 1.8f + 50),
+        sf::Vector2f(400, 50)
+    );
+    _infoButton->setOnClickCallback([this]() {
+        PLOGI << "Info button clicked!";
+        // You can add info functionality here later
+    });
+    _infoButton->setColors(
+        sf::Color(28, 28, 28),   // Normal
+        sf::Color(32, 32, 32),  // Hovered
+        sf::Color(24, 24, 24),   // Pressed
+        sf::Color(100, 100, 100)   // Disabled
+    );
+    _uiManager.addButton(_infoButton);
+    
+    // Create Exit button below info button (text-based)
+    _exitButton = std::make_shared<ui::Button>(
+        font,
+        "EXIT",
+        sf::Vector2f(centerX - 200, WINDOW_HEIGHT / 1.8f + 125),
+        sf::Vector2f(400, 50)
+    );
+    _exitButton->setOnClickCallback([this]() {
+        PLOGI << "Exit button clicked!";
+        _data->window.close();
+    });
+    _exitButton->setColors(
+        sf::Color(28, 28, 28),   // Normal
+        sf::Color(32, 32, 32),  // Hovered
+        sf::Color(24, 24, 24),   // Pressed
+        sf::Color(100, 100, 100)   // Disabled
+    );
+    _uiManager.addButton(_exitButton);
+    
+    PLOGI << "UI setup completed";
 }
